@@ -185,22 +185,6 @@ void _drawYLabels(Canvas c, double pT, double cH) {
     }
   }
 
-  void _text(Canvas c, String t, Offset o, double size) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: t,
-        style: TextStyle(
-          color: Colors.white.withOpacity(0.35),
-          fontSize: size,
-          fontFamily: 'Poppins',
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    painter.layout();
-    painter.paint(c, o);
-  }
-
   @override
   bool shouldRepaint(covariant CustomPainter _) => false;
 }
