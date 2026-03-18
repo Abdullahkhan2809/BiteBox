@@ -14,4 +14,5 @@ class BBColors {
   static const Color blue     = Color(0xFF378ADD);
   static const Color border   = Color(0x12FFFFFF);
   static const Color muted    = Color(0x91FFFFFF);
+  static const Color hinttext = Color.fromARGB(255, 77, 76, 76);
 }
