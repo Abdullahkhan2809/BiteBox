@@ -1,5 +1,4 @@
-// import "dart:ffi";
-import 'package:bitebox/views/admin/add_menu_items.dart';
+import 'package:bitebox/views/admin/menu.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // Ensure this matches your actual class name in dashboardscreen.dart
-      home: const AddmenuItems(), 
+      home: const Menu(), 
     );
   }
 }
