@@ -52,7 +52,7 @@ class BBStatCard extends StatelessWidget {
                   color: iconBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: iconColor, size: 16),
+                child: Icon(icon, color: iconColor, size: 22),
               ),
               const SizedBox(width: 8),
               Flexible(
@@ -60,9 +60,9 @@ class BBStatCard extends StatelessWidget {
                   label.toUpperCase(),
                   style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: BBColors.muted,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromARGB(255, 255, 255, 255),
                     letterSpacing: 0.8,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -87,14 +87,14 @@ class BBStatCard extends StatelessWidget {
           // Trend
           Row(
             children: [
-              Icon(trendIcon, size: 12, color: trendColor),
+              Icon(trendIcon, size: 16, color: trendColor),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   change,
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: trendColor,
                   ),

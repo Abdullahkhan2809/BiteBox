@@ -11,8 +11,8 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  @override
   int _activeNav = 0;
+  @override
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +31,7 @@ class _MenuState extends State<Menu> {
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
                 'assets/images/logo.jpg',
-                height: 50,
+                height: 60,
                 fit: BoxFit.cover,
               ),
             ),

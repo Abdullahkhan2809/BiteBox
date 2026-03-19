@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/bottomnavigationbar.dart';
-import 'package:bitebox/views/widgets/cards.dart';
+import 'package:bitebox/views/widgets/stat_card.dart';
 import 'package:bitebox/views/widgets/dashboard_Shell.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/order_card.dart';
@@ -23,6 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // ── AppBar (kept exactly as yours, just colours from design system) ──
       appBar: AppBar(
         backgroundColor: BBColors.darkRed,
+        toolbarHeight: 74,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
@@ -35,7 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
                 'assets/images/logo.jpg',
-                height: 56,
+                height: 74,
                 fit: BoxFit.cover,
               ),
             ),
@@ -79,7 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   Expanded(
                     child: BBStatCard(
-                      icon: Icons.attach_money_rounded,
+                      icon: Icons.payments_outlined,
                       iconColor: BBColors.red,
                       iconBg: const Color(0x26E51904),
                       label: 'Revenue',

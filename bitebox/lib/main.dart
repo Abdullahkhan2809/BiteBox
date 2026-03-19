@@ -1,4 +1,4 @@
-import 'package:bitebox/views/admin/menu.dart';
+import 'package:bitebox/views/admin/admin_live_order.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // Ensure this matches your actual class name in dashboardscreen.dart
-      home: const Menu(), 
+      home: const AdminLiveOrder(),
     );
   }
 }

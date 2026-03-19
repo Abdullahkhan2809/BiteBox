@@ -19,7 +19,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: BBColors.darkRed,
-        toolbarHeight: 80,
+        toolbarHeight: 74,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
         ),
@@ -32,7 +32,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
                 'assets/images/logo.jpg',
-                height: 50,
+                height: 74,
                 fit: BoxFit.cover,
               ),
             ),
@@ -101,14 +101,14 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                       const LabelText('Item Icon'),
                       GestureDetector(
                         onTap: () {
-                          // TODO: Implement Image Picker
+                          // Implement Image Picker
                         },
                         child: CustomPaint(
                           foregroundPainter: DashedBorderPainter(color: Colors.grey),
                           child: Container(
                             width: 130,
                             height: 130,
-                            color: Colors.transparent, // Required to make it tapped
+                            color: Colors.transparent, 
                             alignment: Alignment.center,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
