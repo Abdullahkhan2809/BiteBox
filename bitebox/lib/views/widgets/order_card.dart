@@ -29,8 +29,6 @@ enum OrderStatus {
   final Color bgColor;
 }
 
-/// Live order card for dashboard.
-/// Matches Figma admin "Live Orders" section.
 class BBOrderCard extends StatelessWidget {
   final String orderNum;
   final String customerName;
