@@ -1,6 +1,9 @@
-import 'package:bitebox/views/admin/admin_live_order.dart';
+import 'package:bitebox/views/admin/profile/admin_profile.dart';
+import 'package:bitebox/views/admin/profile/editprofile.dart';
+
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
+
 
 
 void main() async {
@@ -34,15 +37,12 @@ class MyApp extends StatelessWidget {
           onTertiary: Colors.white,
           error: Colors.red,
           onError: Colors.white, 
-          // Fixed Alpha channel from 00 to FF
           surface: Color(0xFF0A0A0F), 
-          // Changed onSurface to white since the background is now dark
           onSurface: Colors.white,
         ),
       ),
       // Ensure this matches your actual class name in dashboardscreen.dart
-      home: const AdminLiveOrder(),
+      home: const ProfileScreen(),
     );
   }
 }
-
