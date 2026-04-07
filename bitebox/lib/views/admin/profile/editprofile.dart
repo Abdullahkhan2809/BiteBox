@@ -149,8 +149,9 @@ class _EditprofileState extends State<Editprofile> {
                 keyboardType: TextInputType.emailAddress,
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Enter email';
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v))
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
                     return 'Enter a valid email';
+                  }
                   return null;
                 },
                 ),
