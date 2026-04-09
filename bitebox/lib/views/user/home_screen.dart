@@ -1,4 +1,5 @@
 import 'package:bitebox/views/widgets/colors.dart';
+import 'package:bitebox/views/widgets/quickactionbutton.dart';
 import 'package:flutter/material.dart';
 
 class UserHome extends StatefulWidget{
@@ -64,8 +65,23 @@ class _UserHomestate extends State<UserHome>{
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSearchField(controller: _Searchfield, label: 'Search for Biryani, Pizza, Tea...', onfiltertap: () { }),
+            const SizedBox(height: 16),
+
+            //action button
+            Row(
+              children:[
+                Quickactionbutton(icon: Icon(Icons.menu_book_rounded), actionName: 'Menu', coloricon: const Color(0xFFCB2121),),
+                Spacer(),
+                Quickactionbutton(icon: Icon(Icons.local_fire_department), actionName: 'Hot Deals', coloricon: const Color.fromARGB(255, 236, 105, 18),),
+                Spacer(),
+                Quickactionbutton(icon: Icon(Icons.access_time), actionName: 'Recent', coloricon: Colors.orange,),
+              ]
+            ),
+            const SizedBox(height: 16,),
+            Text('Todays special',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
           ],
         ),
       ),
