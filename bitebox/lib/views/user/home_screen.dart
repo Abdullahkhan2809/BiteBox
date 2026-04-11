@@ -1,5 +1,6 @@
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/quickactionbutton.dart';
+import 'package:bitebox/views/widgets/specialmenucard.dart';
 import 'package:flutter/material.dart';
 
 class UserHome extends StatefulWidget{
@@ -81,7 +82,29 @@ class _UserHomestate extends State<UserHome>{
               ]
             ),
             const SizedBox(height: 16,),
-            Text('Todays special',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+            Text('Todays special',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            const SizedBox(height: 16,),
+
+            //horizontal scroll view
+
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  Specialmenucard(foodImage:'https://cdn.cosmos.so/763c6b96-774a-406d-bffb-807ea3812dbd?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
+                  Specialmenucard(foodImage:'https://cdn.cosmos.so/edd1fdb5-f615-4b33-b97a-5074febe5047?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
+                  Specialmenucard(foodImage:'https://cdn.cosmos.so/423b3acf-5a67-4038-8dda-de34acf5e8fb?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
+                  Specialmenucard(foodImage:'https://cdn.cosmos.so/863b3482-82bd-45e3-a752-fb9e51b1278b?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
+                  Specialmenucard(foodImage:'https://cdn.cosmos.so/7548584f-cce3-4795-b740-56c5d648e59b?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
+                ],
+              )),
+              const SizedBox(height: 16,),
+              Text('Explore Categories',style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),),
+              const SizedBox(height: 16,),
+              
           ],
         ),
       ),

@@ -63,7 +63,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                 color: BBColors.surface2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: BBColors.hinttext,width: 1.5)
+                  side: BorderSide(color: BBColors.hintText,width: 1.5)
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
@@ -115,11 +115,11 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                               children: [
                                 Text(
                                   'Item',
-                                  style: TextStyle(color: BBColors.hinttext, fontSize: 13),
+                                  style: TextStyle(color: BBColors.hintText, fontSize: 13),
                                 ),
                                 Text(
                                   'Picture',
-                                  style: TextStyle(color: BBColors.hinttext, fontSize: 13),
+                                  style: TextStyle(color: BBColors.hintText, fontSize: 13),
                                 ),
                               ],
                             ),
@@ -231,7 +231,7 @@ class RoundedTextField extends StatelessWidget {
         style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: BBColors.hinttext),
+          hintStyle: TextStyle(color: BBColors.hintText),
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           border: InputBorder.none, // Removes default underline
         ),
@@ -266,7 +266,7 @@ class RoundedDropdownField extends StatelessWidget {
           dropdownColor: BBColors.red,
           borderRadius: BorderRadius.circular(30),
           isExpanded: true, // Takes up full rounded container width
-          hint: Text('Choose category...', style: TextStyle(color: BBColors.hinttext)),
+          hint: Text('Choose category...', style: TextStyle(color: BBColors.hintText)),
           style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
           icon: const Icon(Icons.keyboard_arrow_down, color: Color.fromARGB(255, 0, 0, 0)),
           items: [
