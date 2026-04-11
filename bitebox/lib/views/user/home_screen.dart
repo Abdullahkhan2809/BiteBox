@@ -2,6 +2,7 @@ import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/quickactionbutton.dart';
 import 'package:bitebox/views/widgets/specialmenucard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class UserHome extends StatefulWidget{
   
@@ -15,7 +16,7 @@ class UserHome extends StatefulWidget{
 class _UserHomestate extends State<UserHome>{
   //defining controller and state
   final TextEditingController _Searchfield= TextEditingController();
-  final int _SelectedIndexFeild=0;
+  int SelectedIndexFeild=0;
   final List<String> _categories = ['All', 'Beverages', 'Desserts', 'Fast Food'];
 
   //disposal for the controller
@@ -25,6 +26,8 @@ class _UserHomestate extends State<UserHome>{
     super.dispose();
    }
 
+    //badge item itemCount
+    int itemCount=4;
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -104,9 +107,59 @@ class _UserHomestate extends State<UserHome>{
                 fontWeight: FontWeight.bold,
               ),),
               const SizedBox(height: 16,),
-              
+              SizedBox(
+                height:50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _categories.length,
+                  itemBuilder:(context,index){
+                    final isSelected=index==SelectedIndexFeild;
+                    return GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          SelectedIndexFeild=index;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                        decoration: BoxDecoration(
+                          color: isSelected ? BBColors.darkRed : const Color.fromARGB(70, 35, 35, 35),
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(color: BBColors.red, width: 1.5)
+                        ),
+                        child: Text(
+                          _categories[index],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  } )
+              )
           ],
         ),
+      ),
+      floatingActionButton: Badge(
+        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        backgroundColor: BBColors.red,
+
+        label:Text(itemCount.toString()),
+        isLabelVisible: itemCount>0,
+        offset: Offset(-8, -2),
+        alignment: Alignment.topRight,
+        child: FloatingActionButton.extended(
+          backgroundColor: BBColors.darkRed,
+          onPressed: (){
+            // to the cart
+          },
+          label: const Text('Orders'),
+          icon: const Icon(Icons.shopping_cart),
+          shape: StadiumBorder(),
+        ),
+        
       ),
     );
   }
