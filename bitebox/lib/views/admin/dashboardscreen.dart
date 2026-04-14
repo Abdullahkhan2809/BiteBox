@@ -1,3 +1,4 @@
+import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/bottomnavigationbar.dart';
 import 'package:bitebox/views/widgets/stat_card.dart';
@@ -21,37 +22,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: BBColors.bg,
 
       // ── AppBar (kept exactly as yours, just colours from design system) ──
-      appBar: AppBar(
-        backgroundColor: BBColors.darkRed,
-        toolbarHeight: 74,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-        ),
-        clipBehavior: Clip.antiAlias,
-        elevation: 8,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/images/logo.jpg',
-                height: 74,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'DASHBOARD',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: "Dashboard")),
+
 
       // ── Bottom Navigation Bar (your existing widget) ──
       bottomNavigationBar: BBBottomNavBar(

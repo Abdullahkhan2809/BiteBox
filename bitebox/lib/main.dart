@@ -1,3 +1,4 @@
+import 'package:bitebox/views/user/cart_screen.dart';
 import 'package:bitebox/views/user/feedback.dart' as user_feedback;
 import 'package:bitebox/views/user/home_screen.dart';
 import "package:flutter/material.dart";
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: const user_feedback.Feedback(),
+      home: const CartScreen(),
     );
   }
 }

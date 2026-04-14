@@ -1,3 +1,4 @@
+import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 
 class ResetpasswordAdmin extends StatefulWidget {
@@ -13,32 +14,8 @@ class _ResetpasswordAdminState extends State<ResetpasswordAdmin> {
     return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.primary,
       //appBar
-      appBar: AppBar(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-        leading: BackButton(),
-        clipBehavior: Clip.antiAlias,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              child: Image.asset('assets/images/logo.jpg', 
-              height: 60,
-              width: 60,
-              fit: BoxFit.fill,
-              )
-            ),
-             const SizedBox(width: 10),
-            const Text(
-              'RESET PASSWORD',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: "Reset Password")),
+
 
       //reset password 
       body : Center(
