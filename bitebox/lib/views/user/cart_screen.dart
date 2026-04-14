@@ -1,4 +1,5 @@
 import 'package:bitebox/views/widgets/appbar.dart';
+import 'package:bitebox/views/widgets/cartitem.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -62,16 +63,82 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
             //add dynamic list of items added to the cart
-
+            const SizedBox(height: 16,),
+            CartItem(title: 'Zinger burger', category: 'Meal', itemDescription: 'Zinger patty etc', price: '450'),
             const SizedBox(height: 16,),
             _PromoCodeTextField(controller: _PromoCode, onApply: (){
               print(_PromoCode.text);
             }),
-
+            const SizedBox(height: 16,),
+            Container(
+              padding: EdgeInsets.all(16),
+              width: double.infinity,
+              height: 180,
+              decoration: BoxDecoration(
+                color: BBColors.surface2,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Align(
+                child: Column(
+                  children: [
+                    Text('Order Summary', style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                    const SizedBox(height: 16,),
+                    Row(
+                      children: [
+                        Text('Subtotal', style: TextStyle(
+                          fontSize: 15,
+                          color: BBColors.hintText,
+                          fontWeight: FontWeight.w600,
+                        ),),
+                        Spacer(),
+                        Text('Rs. 1234', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),)
+                      ],
+                    ),
+                    const SizedBox(height: 16,),
+                    Row(
+                      children: [
+                        Text('Discount', style: TextStyle(
+                          fontSize: 15,
+                          color: BBColors.hintText,
+                          fontWeight: FontWeight.w600,
+                        ),),
+                        Spacer(),
+                        Text('- Rs. 1234', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: BBColors.green,
+                        ),)
+                      ],
+                    ),
+                    const SizedBox(height: 16,),
+                    Row(
+                      children: [
+                        Text('Total', style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),),
+                        Spacer(),
+                        Text('Rs. 1234', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color:const Color.fromARGB(255, 255, 18, 18),
+                          fontSize: 20
+                        ),)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 16,),
 
            ElevatedButton(onPressed: (){
-
+              //post to next project 
            }, 
            style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(BBColors.red),

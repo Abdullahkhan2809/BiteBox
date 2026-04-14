@@ -58,25 +58,27 @@ class _CartItemState extends State<CartItem> {
                 SizedBox(height:18 ,),
                 Row(
                   children: [
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 14),
-                    child: Text(widget.price??'Ask from the canteen',style: TextStyle( fontSize: 20, fontWeight: FontWeight.w900, color: BBColors.red),),
-                    ),
-                    Spacer(),
+                    Text(widget.price != null ? " Rs.${widget.price}" : 'Ask from the canteen',style: TextStyle( fontSize: 20, fontWeight: FontWeight.w900, color: BBColors.red),),
+                    SizedBox(width: 16,),
                     CircleAvatar(
                       radius: 16,
                       backgroundColor: Colors.white,
                       child: IconButton(onPressed: (){},
                        padding: EdgeInsets.zero,
-                       icon: Icon(Icons.edit, color: BBColors.red, size: 18,)),
+                       icon: Icon(Icons.remove_outlined  , color: BBColors.red, size: 24,)),
                     ),
+                    SizedBox(width: 8,),
+                    Text('1', style: TextStyle( fontSize:18,fontWeight:FontWeight.bold),), // dynamic counter for the addition of items
                     SizedBox(width: 8,),
                      CircleAvatar(
                         radius: 16,
                         backgroundColor: BBColors.redMuted,
                        child: IconButton(onPressed: (){},
                        padding: EdgeInsets.zero,
-                       icon: Icon(Icons.delete, color:Colors.white, size: 18,)),
-                     )
+                       icon: Icon(Icons.add, color:Colors.white, size: 24,)),
+                     ),
+                     Spacer(),
+                     IconButton(onPressed: (){}, icon: Icon(Icons.delete_outline))
                   ],
                 )
               ],
