@@ -156,7 +156,7 @@ class _CartScreenState extends State<CartScreen> {
               SizedBox(width: 8,),
               Icon(Icons.arrow_forward_ios_rounded, size: 16,)
             ],
-           ))
+           ),),
           ],
         ),
       )
