@@ -1,4 +1,5 @@
 import 'package:bitebox/views/user/adduserdetails.dart';
+import 'package:bitebox/views/user/checkout.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: const Adduserdetails(),
+      home: const Checkout(),
     );
   }
 }

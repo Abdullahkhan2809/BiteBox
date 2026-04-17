@@ -124,7 +124,7 @@ class _AdduserdetailsState extends State<Adduserdetails> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16,),
+                  SizedBox(height: 24,),
                   //payment method header
                   Container(
                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -207,7 +207,9 @@ class _AdduserdetailsState extends State<Adduserdetails> {
               ),
             ),
 
-            SizedBox(height: 16,),
+            // SizedBox(height: 16,),
+            const SizedBox(height: 24),
+
                ElevatedButton(onPressed: (){
               //post to next project 
            }, 
