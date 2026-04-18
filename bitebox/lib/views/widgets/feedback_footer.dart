@@ -1,6 +1,5 @@
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
 
 class FeedbackFooter extends StatelessWidget {
   const FeedbackFooter({super.key});

@@ -1,5 +1,6 @@
-import 'package:bitebox/views/user/adduserdetails.dart';
-import 'package:bitebox/views/user/checkout.dart';
+import 'package:bitebox/models/menu_item_model.dart';
+import 'package:bitebox/models/retaurant_model.dart';
+import 'package:bitebox/views/splash_screen.dart';
 import 'package:bitebox/views/user/restaurent_menu_screen.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: const RestaurentMenuScreen(),
+      home: const SplashScreen(),
     );
   }
 }

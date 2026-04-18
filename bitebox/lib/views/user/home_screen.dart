@@ -3,7 +3,6 @@ import 'package:bitebox/views/widgets/quickactionbutton.dart';
 import 'package:bitebox/views/widgets/specialmenucard.dart';
 import 'package:bitebox/views/widgets/feedback_footer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class UserHome extends StatefulWidget{
   
