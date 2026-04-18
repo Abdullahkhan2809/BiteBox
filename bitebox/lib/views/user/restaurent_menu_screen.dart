@@ -1,3 +1,6 @@
+import 'package:bitebox/views/widgets/appbar.dart';
+import 'package:bitebox/views/widgets/colors.dart';
+import 'package:bitebox/views/widgets/feedback_footer.dart';
 import 'package:flutter/material.dart';
 
 class RestaurentMenuScreen extends StatefulWidget {
@@ -8,9 +11,94 @@ class RestaurentMenuScreen extends StatefulWidget {
 }
 
 class _RestaurentMenuScreenState extends State<RestaurentMenuScreen> {
+  // count of items into the badge
+  int itemCount = 4;
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(74),
+        child: AppbarWidget(title: 'Menu'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //bread crumbs
+                        Row(
+                          children: [
+                            InkWell(
+                              onDoubleTap: () {
+                                //navigate to home screen
+                              },
+                              child: Text(
+                                'NBC',
+                                style: TextStyle(
+                                  color: BBColors.muted,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4,),
+                              Text(
+                                '> ... > as Per the retaurant ',
+                                style: TextStyle(
+                                  color: BBColors.muted,
+                                  fontSize: 12,
+                                ),
+                              ),
+                          ],
+                        ),
+                        //restaurant info Row
+                        //ratting Row
+                        //menu items lists
+                      ],
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: Divider( height: 1,),
+                ),
+                const SliverToBoxAdapter(
+                  
+                  child: FeedbackFooter(),
+                ),
+                const SliverToBoxAdapter(
+                  child: Divider( height: 1,),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: Badge(
+        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        backgroundColor: BBColors.red,
+
+        label: Text(itemCount.toString(),style: TextStyle( fontSize: 14),),
+        isLabelVisible: itemCount > 0,
+        offset: Offset(-8, -2),
+        alignment: Alignment.topRight,
+        child: FloatingActionButton.extended(
+          backgroundColor: BBColors.darkRed,
+          onPressed: () {
+            // to the cart
+          },
+          label: const Text('Orders'),
+          icon: const Icon(Icons.shopping_cart),
+          shape: StadiumBorder(),
+        ),
+      ),
+    );
   }
 }
-

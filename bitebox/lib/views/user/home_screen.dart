@@ -1,6 +1,7 @@
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/quickactionbutton.dart';
 import 'package:bitebox/views/widgets/specialmenucard.dart';
+import 'package:bitebox/views/widgets/feedback_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -94,6 +95,7 @@ class _UserHomestate extends State<UserHome>{
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
+                  //restaurant cards
                   Specialmenucard(foodImage:'https://cdn.cosmos.so/763c6b96-774a-406d-bffb-807ea3812dbd?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
                   Specialmenucard(foodImage:'https://cdn.cosmos.so/edd1fdb5-f615-4b33-b97a-5074febe5047?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
                   Specialmenucard(foodImage:'https://cdn.cosmos.so/423b3acf-5a67-4038-8dda-de34acf5e8fb?format=jpeg' , itemName: 'Spicy Karachi Biryani', rate: 4.8, timetext: 5),
@@ -138,7 +140,11 @@ class _UserHomestate extends State<UserHome>{
                       ),
                     );
                   } )
-              )
+              ),
+              //feedback_footer
+              Divider(),
+              FeedbackFooter(),
+              Divider(),
           ],
         ),
       ),
