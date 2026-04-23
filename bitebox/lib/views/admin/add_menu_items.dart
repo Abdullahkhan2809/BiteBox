@@ -32,13 +32,13 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                 elevation: 4,
                 color: BBColors.surface2,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                   side: BorderSide(color: BBColors.hintText,width: 1.5)
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Left align labels
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Center(
                         child: Text(
@@ -68,6 +68,8 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                       const LabelText('Price'),
                       const RoundedTextField(hintText: 'Enter price...', keyboardType: TextInputType.number),
 
+                      const LabelText('Description'),
+                      const RoundedTextField(hintText: 'Description', maxLines: 3),
                       const LabelText('Item Icon'),
                       GestureDetector(
                         onTap: () {
@@ -182,11 +184,13 @@ class _AddmenuItemsState extends State<AddmenuItems> {
 class RoundedTextField extends StatelessWidget {
   final String hintText;
   final TextInputType keyboardType;
+  final int maxLines;
 
   const RoundedTextField({
     super.key,
     required this.hintText,
     this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
   });
 
   @override
@@ -194,10 +198,11 @@ class RoundedTextField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: TextFormField(
         keyboardType: keyboardType,
+        maxLines: maxLines,
         style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
           hintText: hintText,
@@ -227,14 +232,14 @@ class RoundedDropdownField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
           onChanged: onChanged,
           dropdownColor: BBColors.red,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(10),
           isExpanded: true, // Takes up full rounded container width
           hint: Text('Choose category...', style: TextStyle(color: BBColors.hintText)),
           style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),

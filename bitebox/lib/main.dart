@@ -1,18 +1,28 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/models/retaurant_model.dart';
-import 'package:bitebox/views/splash_screen.dart';
+import 'package:bitebox/views/admin/add_menu_items.dart';
+import 'package:bitebox/views/user/aboutus.dart';
+
+import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/user/restaurent_menu_screen.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:bitebox/views/widgets/colors.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:bitebox/views/admin/dashboardscreen.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Hive initialization
-  await Hive.initFlutter();
-  await Hive.openBox('userdata');
-
+    try{
+    await Hive.initFlutter();
+    await Hive.openBox('userdata');
+} catch(e){
+  print('Hive error $e');
+}
 
   runApp(const MyApp());
 }
@@ -42,7 +52,14 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: const SplashScreen(),
-    );
+      home:AnimatedSplashScreen(
+      duration: 2000,
+      splash:  Image.asset('assets/images/logo.jpg',),
+      splashIconSize: 200,
+      splashTransition: SplashTransition.scaleTransition,
+      pageTransitionType: PageTransitionType.bottomToTop,
+      nextScreen: const Aboutus(),
+      backgroundColor: BBColors.darkRed,
+      ));
   }
 }

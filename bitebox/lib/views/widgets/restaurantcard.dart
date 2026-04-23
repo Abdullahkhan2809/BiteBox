@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,28 @@ class Specialmenucard extends StatefulWidget {
 }
 
 class _SpecialmenucardState extends State<Specialmenucard> {
+  Future<ImageProvider> _loadImage(String assetPath) async {
+    final imageProvider = AssetImage(assetPath);
+
+    // Preload image (this actually triggers async loading)
+    final completer = Completer<ImageInfo>();
+    imageProvider
+        .resolve(const ImageConfiguration())
+        .addListener(
+          ImageStreamListener(
+            (info, _) {
+              completer.complete(info);
+            },
+            onError: (error, stackTrace) {
+              completer.completeError(error);
+            },
+          ),
+        );
+
+    await completer.future;
+    return imageProvider;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,17 +60,37 @@ class _SpecialmenucardState extends State<Specialmenucard> {
           SizedBox(
             height: 140,
             width: double.infinity,
-            child: Image.network(
-              widget.foodImage,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                color: BBColors.surface2,
-                child: const Icon(Icons.image_not_supported, color: BBColors.hintText),
-              ),
+            child: FutureBuilder<ImageProvider>(
+              future: _loadImage(widget.foodImage),
+              builder: (context, snapshot) {
+                //loading screen
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    color: Colors.grey[900],
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+
+                // exception
+                if (snapshot.hasError) {
+                  return Container(
+                    color: Colors.grey[900],
+                    child: const Icon(
+                      Icons.broken_image,
+                      color: Colors.white54,
+                    ),
+                  );
+                }
+
+                //after loading the picture
+                return Image(image: snapshot.data!, fit: BoxFit.cover);
+              },
             ),
           ),
 
-          // ── Text content ─────────────────────────────────────────────────
+          //Text content
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
             child: Text(
@@ -62,7 +105,7 @@ class _SpecialmenucardState extends State<Specialmenucard> {
             ),
           ),
 
-          // ── Rating + time ─────────────────────────────────────────────────
+          // Rating + time 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
@@ -71,10 +114,7 @@ class _SpecialmenucardState extends State<Specialmenucard> {
                 const SizedBox(width: 3),
                 Text(
                   '${widget.rate} - Time ${widget.timetext} min',
-                  style: const TextStyle(
-                    color: BBColors.muted,
-                    fontSize: 11,
-                  ),
+                  style: const TextStyle(color: BBColors.muted, fontSize: 11),
                 ),
               ],
             ),
@@ -82,7 +122,7 @@ class _SpecialmenucardState extends State<Specialmenucard> {
 
           const SizedBox(height: 8),
 
-          // ── Add to Order button ───────────────────────────────────────────
+          //Add to Order button 
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: SizedBox(
@@ -98,13 +138,12 @@ class _SpecialmenucardState extends State<Specialmenucard> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                icon: const Icon(Icons.add, color: Colors.white, size: 14),
                 label: const Text(
-                  'Add to Order',
+                  'See More',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 11,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
