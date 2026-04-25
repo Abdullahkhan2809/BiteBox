@@ -1,5 +1,6 @@
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Menuitemcarduser extends StatelessWidget {
   final String title;
@@ -57,7 +58,7 @@ class Menuitemcarduser extends StatelessWidget {
                     children: [
                       Text(
                         title.toUpperCase(),
-                        style: const TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
@@ -66,7 +67,7 @@ class Menuitemcarduser extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         itemDescription ?? '',
-                        style: const TextStyle(
+                        style:  GoogleFonts.poppins(
                           color: BBColors.muted,
                           fontSize: 13,
                         ),
@@ -90,7 +91,7 @@ class Menuitemcarduser extends StatelessWidget {
                   ),
                   child: Text(
                     category.toUpperCase(),
-                    style: const TextStyle(
+                    style:  GoogleFonts.poppins(
                       color: BBColors.red,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -107,7 +108,7 @@ class Menuitemcarduser extends StatelessWidget {
               children: [
                 Text(
                   price != null ? 'Rs $price.00' : 'Ask from the canteen',
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: BBColors.red,
@@ -165,8 +166,8 @@ class Menuitemcarduser extends StatelessWidget {
     return CircleAvatar(
       radius: 30,
       backgroundColor: BBColors.darkRed,
-      child: const Text('B',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      child: Text('B',
+          style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
     );
   }
 }

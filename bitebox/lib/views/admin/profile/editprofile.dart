@@ -1,6 +1,8 @@
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Editprofile extends StatefulWidget {
   const Editprofile({super.key});
@@ -176,7 +178,7 @@ class _EditprofileState extends State<Editprofile> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(onPressed: (){
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminProfile);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: BBColors.red,
@@ -214,9 +216,9 @@ class _EditprofileState extends State<Editprofile> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: GoogleFonts.poppins(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
         ),
@@ -226,15 +228,15 @@ class _EditprofileState extends State<Editprofile> {
           keyboardType: keyboardType,
           validator: validator,
           maxLines: maxLines,
-          style: const TextStyle(color: Colors.white),
+          style: GoogleFonts.poppins(color: Colors.white),
           decoration: InputDecoration(
             hintText: 'Enter ${label.toLowerCase()}...',
-            hintStyle: const TextStyle(color: Color(0xFF737373)),
+            hintStyle: GoogleFonts.poppins(color: Color(0xFF737373)),
             filled: true,
             fillColor: BBColors.border,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
+
             ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 16, horizontal: 16),

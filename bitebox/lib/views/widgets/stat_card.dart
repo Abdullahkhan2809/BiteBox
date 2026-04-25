@@ -1,19 +1,15 @@
-// views/widgets/stat_card.dart
-// Place this file at: lib/views/widgets/stat_card.dart
-
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-/// Stat card — Revenue / Orders / etc.
-/// Matches the two cards in the Figma admin dashboard header.
 class BBStatCard extends StatelessWidget {
   final IconData icon;
-  final Color    iconColor;
-  final Color    iconBg;
-  final String   label;
-  final String   value;
-  final String   change;
-  final bool     changeUp;
+  final Color iconColor;
+  final Color iconBg;
+  final String label;
+  final String value;
+  final String change;
+  final bool changeUp;
 
   const BBStatCard({
     super.key,
@@ -29,7 +25,7 @@ class BBStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trendColor = changeUp ? BBColors.green : BBColors.red;
-    final trendIcon  = changeUp
+    final trendIcon = changeUp
         ? Icons.trending_up_rounded
         : Icons.trending_down_rounded;
 
@@ -47,7 +43,8 @@ class BBStatCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 32, height: 32,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   color: iconBg,
                   borderRadius: BorderRadius.circular(8),
@@ -58,8 +55,7 @@ class BBStatCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   label.toUpperCase(),
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
+                  style: GoogleFonts.koulen(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Color.fromARGB(255, 255, 255, 255),
@@ -75,8 +71,7 @@ class BBStatCard extends StatelessWidget {
           // Value
           Text(
             value,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
+            style: GoogleFonts.poppins(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.white,

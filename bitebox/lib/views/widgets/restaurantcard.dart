@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Specialmenucard extends StatefulWidget {
   final String foodImage;
@@ -95,7 +96,7 @@ class _SpecialmenucardState extends State<Specialmenucard> {
             padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
             child: Text(
               widget.itemName,
-              style: const TextStyle(
+              style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -114,7 +115,7 @@ class _SpecialmenucardState extends State<Specialmenucard> {
                 const SizedBox(width: 3),
                 Text(
                   '${widget.rate} - Time ${widget.timetext} min',
-                  style: const TextStyle(color: BBColors.muted, fontSize: 11),
+                  style: GoogleFonts.poppins(color: BBColors.muted, fontSize: 11),
                 ),
               ],
             ),
@@ -138,12 +139,13 @@ class _SpecialmenucardState extends State<Specialmenucard> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                label: const Text(
+                label: Text(
                   'See More',
-                  style: TextStyle(
+                  style: GoogleFonts.bebasNeue(
                     color: Colors.white,
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2
                   ),
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class StatusBadge extends StatelessWidget {
   final String status;
@@ -48,7 +49,7 @@ class StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(
+        style: GoogleFonts.poppins(
           color: getTextColor(),
           fontWeight: FontWeight.bold,
           fontSize: 13,

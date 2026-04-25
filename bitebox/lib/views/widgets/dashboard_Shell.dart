@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
 
@@ -22,10 +23,9 @@ class BBSalesChartCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Sales Performance',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
+                style: GoogleFonts.poppins(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
@@ -38,10 +38,9 @@ class BBSalesChartCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(99),
                   border: Border.all(color: BBColors.border),
                 ),
-                child: const Text(
+                child: Text(
                   'Last 7 Days',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
+                  style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: BBColors.muted,
@@ -112,10 +111,9 @@ void _drawYLabels(Canvas c, double pT, double cH) {
     final painter = TextPainter(
       text: TextSpan(
         text: yLabels[i],
-        style: TextStyle(
+        style: GoogleFonts.poppins(
           color: Colors.white.withOpacity(0.45),
           fontSize: 9,
-          fontFamily: 'Poppins',
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -132,10 +130,9 @@ void _drawYLabels(Canvas c, double pT, double cH) {
     final painter = TextPainter(
       text: TextSpan(
         text: labels[i],
-        style: TextStyle(
+        style: GoogleFonts.poppins(
           color: Colors.white.withOpacity(0.45),
           fontSize: 9,
-          fontFamily: 'Poppins',
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -146,7 +143,7 @@ void _drawYLabels(Canvas c, double pT, double cH) {
   }
 }
 
-  void _drawLine(Canvas c, List<double> data, Color color,
+void _drawLine(Canvas c, List<double> data, Color color,
       double pL, double pT, double cW, double cH) {
     final pts = List.generate(data.length, (i) => Offset(
       pL + (cW / (data.length - 1)) * i,
@@ -206,9 +203,8 @@ class _LegendDot extends StatelessWidget {
       ),
       const SizedBox(width: 5),
       Text(label,
-        style: const TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 11,
+        style: GoogleFonts.poppins(
+          fontSize: 12,
           color: BBColors.muted,
         ),
       ),

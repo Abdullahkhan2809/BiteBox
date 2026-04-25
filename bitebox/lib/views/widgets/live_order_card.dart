@@ -2,6 +2,7 @@ import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/status_badge.dart';
 import 'package:bitebox/views/widgets/payment_badge.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class LiveOrderCard extends StatefulWidget {
@@ -75,7 +76,7 @@ class _LiveOrderCardState extends State<LiveOrderCard> {
                   children: [
                     Text(
                       'Order #${widget.orderNumber}',
-                      style: const TextStyle(
+                      style: GoogleFonts.koulen(
                         color: Colors.white,
                         fontSize: 22, // Increased font size
                         fontWeight: FontWeight.bold,

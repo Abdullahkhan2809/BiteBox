@@ -1,11 +1,15 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/models/retaurant_model.dart';
 import 'package:bitebox/views/admin/add_menu_items.dart';
+import 'package:bitebox/views/admin/admin_live_order.dart';
+import 'package:bitebox/views/auth/view/login_admin.dart';
 import 'package:bitebox/views/user/aboutus.dart';
 
 import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/user/restaurent_menu_screen.dart';
+import 'package:bitebox/views/admin/profile/admin_profile.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import "package:flutter/material.dart";
@@ -52,14 +56,29 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home:AnimatedSplashScreen(
-      duration: 2000,
-      splash:  Image.asset('assets/images/logo.jpg',),
-      splashIconSize: 200,
-      splashTransition: SplashTransition.scaleTransition,
-      pageTransitionType: PageTransitionType.bottomToTop,
-      nextScreen: const Aboutus(),
-      backgroundColor: BBColors.darkRed,
-      ));
+        routes: {
+        '/': (_) => AnimatedSplashScreen(
+              duration: 2000,
+              splash: Image.asset('assets/images/logo.jpg'),
+              splashIconSize: 200,
+              splashTransition: SplashTransition.scaleTransition,
+              pageTransitionType: PageTransitionType.bottomToTop,
+              nextScreen: const ProfileScreen(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
+              backgroundColor: BBColors.darkRed,
+            ),
+        ...BiteBoxRoutes.getRoutes(), // ← all named routes registered
+      },);
   }
+  //  Widget _resolveInitialScreen(String route) {
+  //   switch (route) {
+  //     case BiteBoxRoutes.home:
+  //       return const  UserHome();
+  //     case BiteBoxRoutes.adminDashboard:
+  //       return const DashboardScreen();
+  //     case BiteBoxRoutes.adminLiveOrders:
+  //       return const AdminLiveOrder();
+  //     default:
+  //       return const LoginAdmin(); // fallback → login
+  //   }
+  // }
 }

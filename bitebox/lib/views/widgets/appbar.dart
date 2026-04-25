@@ -1,5 +1,6 @@
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppbarWidget extends StatelessWidget {
   final String title;
@@ -24,12 +25,9 @@ class AppbarWidget extends StatelessWidget {
             ),
             SizedBox(width: 20,),
            
-            Text(title, style: TextStyle(
-                fontSize: 30,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            Text(title, style: GoogleFonts.koulen(
+              fontSize: 30,
+            )
             ),
           ],
         ),

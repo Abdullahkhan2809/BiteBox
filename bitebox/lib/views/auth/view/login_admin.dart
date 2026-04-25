@@ -1,5 +1,8 @@
+import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/floatingicons.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginAdmin extends StatefulWidget {
   const LoginAdmin({super.key});
@@ -61,7 +64,7 @@ class _LoginAdminState extends State<LoginAdmin> {
     ];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: BBColors.darkRed,
       body: Stack(
         children: [
           // 1. Background Layer
@@ -81,10 +84,10 @@ class _LoginAdminState extends State<LoginAdmin> {
                       height: 150,
                       fit: BoxFit.contain,
                     ),
-                    const Text(
+                    Text(
                       'Fuel Campus life...!',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style:GoogleFonts.pangolin(
+                        fontSize: 20,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
@@ -108,10 +111,10 @@ class _LoginAdminState extends State<LoginAdmin> {
                         ),
                         child: Column(
                           children: [
-                            const Text(
+                             Text(
                               'Admin Login',
-                              style: TextStyle(
-                                fontSize: 28,
+                              style: GoogleFonts.poppins(
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -156,11 +159,11 @@ class _LoginAdminState extends State<LoginAdmin> {
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  // TODO: Navigate to Forgot Password Screen
+                                  Navigator.pushNamed(context, BiteBoxRoutes.forgotPassword);
                                 },
-                                child: const Text(
+                                child: Text(
                                   'Forgot Password?',
-                                  style: TextStyle(
+                                  style: GoogleFonts.poppins(
                                     color: Color.fromARGB(255, 255, 31, 31),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
@@ -192,11 +195,11 @@ class _LoginAdminState extends State<LoginAdmin> {
                                           color: Colors.white,
                                         ),
                                       )
-                                    : const Text(
+                                    : Text(
                                         'Sign In',
-                                        style: TextStyle(
+                                        style: GoogleFonts.poppins(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w700,
                                         ),
                                       ),
                               ),
@@ -209,16 +212,16 @@ class _LoginAdminState extends State<LoginAdmin> {
                     const SizedBox(height: 14),
                     TextButton(
                       onPressed: () {
-                        // Navigate to Signup page logic
+                        Navigator.pushNamed(context, BiteBoxRoutes.signup);
                       },
                       child: RichText(
-                        text: const TextSpan(
-                          style: TextStyle(fontSize: 14, color: Colors.white70),
+                        text:  TextSpan(
+                          style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70),
                           children: [
                             TextSpan(text: "Don't have an account? "),
                             TextSpan(
                               text: 'Sign Up',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -250,9 +253,9 @@ class _LoginAdminState extends State<LoginAdmin> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: GoogleFonts.poppins(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
         ),
@@ -261,10 +264,10 @@ class _LoginAdminState extends State<LoginAdmin> {
           controller: controller,
           keyboardType: keyboardType,
           validator: validator,
-          style: const TextStyle(color: Colors.black87),
+          style: GoogleFonts.poppins(color: Colors.black87),
           decoration: InputDecoration(
             hintText: 'Enter ${label.toLowerCase()}...',
-            hintStyle: const TextStyle(color: Color(0xFF737373)),
+            hintStyle: GoogleFonts.poppins(color: Color(0xFF737373)),
             prefixIcon: Icon(icon, color: const Color(0xFFE51A04)),
             filled: true,
             fillColor: const Color(0xFFE6E6E6),
@@ -294,9 +297,9 @@ class _LoginAdminState extends State<LoginAdmin> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: GoogleFonts.poppins(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
         ),
@@ -305,10 +308,10 @@ class _LoginAdminState extends State<LoginAdmin> {
           controller: controller,
           obscureText: obscure,
           validator: validator,
-          style: const TextStyle(color: Colors.black87),
+          style: GoogleFonts.poppins(color: Colors.black87),
           decoration: InputDecoration(
             hintText: 'Password...',
-            hintStyle: const TextStyle(color: Color(0xFF737373)),
+            hintStyle: GoogleFonts.poppins(color: Color(0xFF737373)),
             prefixIcon: const Icon(
               Icons.lock_outlined,
               color: Color(0xFFE51A04),

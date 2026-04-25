@@ -1,7 +1,9 @@
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/admin/profile/editprofile.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -62,11 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // ── Name ──
               Text(
                 _name.toUpperCase(),
-                style: const TextStyle(
+                style: GoogleFonts.koulen(
                   color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
+                  fontSize: 32,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -82,11 +82,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Text(
                   _role.toUpperCase(),
-                  style: const TextStyle(
+                  style: GoogleFonts.koulen(
                     color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
+                    fontSize: 16,
+                    letterSpacing: 1.3,
                   ),
                 ),
               ),
@@ -123,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       'Profile Information',
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         color: BBColors.red,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -148,9 +147,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 label: 'Edit Profile',
                 filled: true,
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacementNamed(
                     context,
-                    MaterialPageRoute(builder: (_) => const Editprofile()),
+                    BiteBoxRoutes.adminEditProfile
                   );
                 },
               ),
@@ -162,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 label: 'Change Password',
                 filled: false,
                 onPressed: () {
-                  // TODO: Navigate to change password screen
+                  Navigator.pushNamed(context,BiteBoxRoutes.forgotPassword);
                 },
               ),
           
@@ -203,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Text(
               value,
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 color: isRating ? BBColors.red : Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -212,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: GoogleFonts.poppins(
                 color: Colors.grey,
                 fontSize: 11,
                 letterSpacing: 0.5,
@@ -233,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.grey,
               fontSize: 12,
             ),
@@ -241,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.white,
               fontSize: 15,
               fontWeight: FontWeight.w500,
@@ -281,9 +280,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: Text(
                 label,
-                style: const TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             )
@@ -299,9 +298,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: Text(
                 label,
-                style: const TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -313,26 +312,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF222222),
+        backgroundColor: BBColors.surface2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title:  Text(
           'Log Out',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        content: const Text(
+        content:  Text(
           'Are you sure you want to log out?',
-          style: TextStyle(color: Colors.grey),
+          style: GoogleFonts.poppins(color: Colors.grey ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('Cancel', style: GoogleFonts.poppins(color: Colors.grey ,fontWeight: FontWeight.w600)),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(ctx);
-              // TODO: Clear session and navigate to login
-              // Navigator.pushAndRemoveUntil(context, ...)
+              BiteBoxRoutes.logout(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: BBColors.red,
@@ -340,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            child: const Text('Log Out', style: TextStyle(color: Colors.white)),
+            child: Text('Log Out', style: GoogleFonts.poppins(color: Colors.white ,fontWeight: FontWeight.w600)),
           ),
         ],
       ),

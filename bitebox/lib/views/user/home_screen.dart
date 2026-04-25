@@ -3,6 +3,7 @@ import 'package:bitebox/views/widgets/menuitemCardUser.dart';
 import 'package:bitebox/views/widgets/restaurantcard.dart';
 import 'package:bitebox/views/widgets/feedback_footer.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class UserHome extends StatefulWidget {
   const UserHome({super.key});
@@ -59,7 +60,7 @@ class _UserHomestate extends State<UserHome> {
               children: [
                 Text(
                   'Hi, Guest!',
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: const Color.fromARGB(201, 255, 255, 255),
@@ -67,8 +68,8 @@ class _UserHomestate extends State<UserHome> {
                 ),
                 Text(
                   'HUNGRY? LET`S FIND...',
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: GoogleFonts.koulen(
+                    fontSize: 24,
                     fontWeight: FontWeight.w500,
                     color: const Color.fromARGB(255, 255, 255, 255),
                   ),
@@ -90,7 +91,7 @@ class _UserHomestate extends State<UserHome> {
               onfiltertap: () {
                 showModalBottomSheet(
                   context: context,
-                  backgroundColor: BBColors.surface,
+                  backgroundColor: BBColors.darkRed,
                   shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(25)),
@@ -101,29 +102,29 @@ class _UserHomestate extends State<UserHome> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          ListTile(
-                            leading: const Icon(Icons.storefront,
-                                color: BBColors.red),
-                            title: const Text('Become a Vendor',
-                                style: TextStyle(color: Colors.white)),
-                            onTap: () {
-                              //move to admin login page
-                            },
-                          ),
-                          ListTile(
+                           ListTile(
                             leading: const Icon(Icons.shopping_cart_outlined,
-                                color: BBColors.red),
-                            title: const Text('My Cart',
-                                style: TextStyle(color: Colors.white)),
+                                color: Color.fromARGB(255, 255, 29, 40)),
+                            title:  Text('My Cart',
+                                style: GoogleFonts.poppins(color: Colors.white)),
                             onTap: () {
                               // move to the cart page
                             },
                           ),
                           ListTile(
+                            leading: const Icon(Icons.storefront,
+                                color: BBColors.amber),
+                            title:  Text('Become a Vendor',
+                                style: GoogleFonts.poppins(color: Colors.white)),
+                            onTap: () {
+                              //move to admin login page
+                            },
+                          ),
+                          ListTile(
                             leading:
                                 const Icon(Icons.info_outline, color: BBColors.red),
-                            title: const Text('About Us',
-                                style: TextStyle(color: Colors.white)),
+                            title: Text('About Us',
+                                style: GoogleFonts.poppins(color: Colors.white)),
                             onTap: () {
                               // Move the aboutus
                             },
@@ -139,9 +140,9 @@ class _UserHomestate extends State<UserHome> {
             const SizedBox(height: 16),
             Text(
               'Top Restarurants',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: GoogleFonts.poppins(fontSize: 22,fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             //horizontal scroll view
             SingleChildScrollView(
@@ -185,7 +186,7 @@ class _UserHomestate extends State<UserHome> {
             const SizedBox(height: 16),
             Text(
               'Explore Categories',
-              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+              style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -216,7 +217,7 @@ class _UserHomestate extends State<UserHome> {
                       ),
                       child: Text(
                         _categories[index],
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                         ),
@@ -260,7 +261,7 @@ class _UserHomestate extends State<UserHome> {
           onPressed: () {
             // to the cart
           },
-          label: const Text('Orders'),
+          label:  Text('Orders',style: GoogleFonts.poppins(),),
           icon: const Icon(Icons.shopping_cart),
           shape: StadiumBorder(),
         ),
@@ -294,13 +295,13 @@ Widget _buildSearchField({
             child: TextField(
               controller: controller,
               keyboardType: keyboardtype,
-              style: const TextStyle(
+              style: GoogleFonts.poppins(
                 color: Color.fromARGB(215, 255, 255, 255),
                 fontSize: 14,
               ),
               decoration: InputDecoration(
                 hintText: label,
-                hintStyle: const TextStyle(color: Colors.white54, fontSize: 13),
+                hintStyle: GoogleFonts.poppins(color: Colors.white54, fontSize: 13),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
