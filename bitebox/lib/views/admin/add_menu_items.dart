@@ -1,9 +1,10 @@
-
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/bottomnavigationbar.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'dart:ui';
+
 class AddmenuItems extends StatefulWidget {
   const AddmenuItems({super.key});
 
@@ -12,17 +13,18 @@ class AddmenuItems extends StatefulWidget {
 }
 
 class _AddmenuItemsState extends State<AddmenuItems> {
-  String? selected='Meal';
-  int _activeNav=0;
-  
+  String? selected = 'Meal';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: "Add Menu")),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(74),
+        child: AppbarWidget(title: "Add Menu"),
+      ),
 
       //container to add the items
-
-      body:Center(
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: ListView(
@@ -33,7 +35,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                 color: BBColors.surface2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
-                  side: BorderSide(color: BBColors.hintText,width: 1.5)
+                  side: BorderSide(color: BBColors.hintText, width: 1.5),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
@@ -51,7 +53,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                         ),
                       ),
                       const SizedBox(height: 14),
-                      
+
                       const LabelText('Name Item'),
                       const RoundedTextField(hintText: 'Item name...'),
 
@@ -66,32 +68,46 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                       ),
 
                       const LabelText('Price'),
-                      const RoundedTextField(hintText: 'Enter price...', keyboardType: TextInputType.number),
+                      const RoundedTextField(
+                        hintText: 'Enter price...',
+                        keyboardType: TextInputType.number,
+                      ),
 
                       const LabelText('Description'),
-                      const RoundedTextField(hintText: 'Description', maxLines: 3),
+                      const RoundedTextField(
+                        hintText: 'Description',
+                        maxLines: 3,
+                      ),
                       const LabelText('Item Icon'),
                       GestureDetector(
                         onTap: () {
                           // Implement Image Picker
                         },
                         child: CustomPaint(
-                          foregroundPainter: DashedBorderPainter(color: Colors.grey),
+                          foregroundPainter: DashedBorderPainter(
+                            color: Colors.grey,
+                          ),
                           child: Container(
                             width: 130,
                             height: 130,
-                            color: Colors.transparent, 
+                            color: Colors.transparent,
                             alignment: Alignment.center,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   'Item',
-                                  style: TextStyle(color: BBColors.hintText, fontSize: 13),
+                                  style: TextStyle(
+                                    color: BBColors.hintText,
+                                    fontSize: 13,
+                                  ),
                                 ),
                                 Text(
                                   'Picture',
-                                  style: TextStyle(color: BBColors.hintText, fontSize: 13),
+                                  style: TextStyle(
+                                    color: BBColors.hintText,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
@@ -109,19 +125,22 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                             width: 97,
                             height: 40,
                             child: ElevatedButton(
-                              
                               onPressed: () {
+                                Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot, arguments: 0);
                               },
                               style: ElevatedButton.styleFrom(
-                                 backgroundColor: Colors.grey[200],
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
+                                backgroundColor: BBColors.surface2,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               ),
                               child: Text(
                                 'Cancel',
-                                style: TextStyle(color: Colors.black, fontSize: 16),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           ),
@@ -131,7 +150,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                             width: 90,
                             child: ElevatedButton(
                               onPressed: () {
-                                // TODO: Handle 40ve Item
+                                // TODO: Handle Save Item
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: BBColors.red,
@@ -160,22 +179,6 @@ class _AddmenuItemsState extends State<AddmenuItems> {
           ),
         ),
       ),
-
-     bottomNavigationBar: BBBottomNavBar(
-        activeIndex: _activeNav,
-        onTap: (i) => setState(() => _activeNav = i),
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: 
-      (){
-
-      },
-      backgroundColor: BBColors.darkRed,
-    shape: const CircleBorder(),
-    elevation: 4,
-    child: const Icon(Icons.close, color: Colors.white, size: 26),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      
     );
   }
 }
@@ -207,7 +210,10 @@ class RoundedTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: BBColors.hintText),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 15,
+          ),
           border: InputBorder.none, // Removes default underline
         ),
       ),
@@ -241,9 +247,19 @@ class RoundedDropdownField extends StatelessWidget {
           dropdownColor: BBColors.red,
           borderRadius: BorderRadius.circular(10),
           isExpanded: true, // Takes up full rounded container width
-          hint: Text('Choose category...', style: TextStyle(color: BBColors.hintText)),
-          style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-          icon: const Icon(Icons.keyboard_arrow_down, color: Color.fromARGB(255, 0, 0, 0)),
+          hint: Text(
+            'Choose category...',
+            style: TextStyle(color: BBColors.hintText),
+          ),
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          icon: const Icon(
+            Icons.keyboard_arrow_down,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
           items: [
             DropdownMenuItem(value: 'Meal', child: Text('Meal')),
             DropdownMenuItem(value: 'Dessert', child: Text('Dessert')),
@@ -277,13 +293,19 @@ class DashedBorderPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final Path path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-          Rect.fromLTWH(0, 0, size.width, size.height), const Radius.circular(15)));
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          const Radius.circular(15),
+        ),
+      );
 
     for (final PathMetric metric in path.computeMetrics()) {
       double distance = 0.0;
       while (distance < metric.length) {
-        final double length = dashWidth < metric.length - distance ? dashWidth : metric.length - distance;
+        final double length = dashWidth < metric.length - distance
+            ? dashWidth
+            : metric.length - distance;
         final Path dash = metric.extractPath(distance, distance + length);
         canvas.drawPath(dash, paint);
         distance += dashWidth + dashSpace;
@@ -305,7 +327,11 @@ class LabelText extends StatelessWidget {
       padding: const EdgeInsets.only(top: 15, bottom: 8),
       child: Text(
         text,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
       ),
     );
   }

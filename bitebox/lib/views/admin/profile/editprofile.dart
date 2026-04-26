@@ -23,14 +23,15 @@ class _EditprofileState extends State<Editprofile> {
 
   bool _isLoading=false;
 
-   //desposal function when controllers are saved or cancel then destroyed
-  void disposal(){
+  @override
+  void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _restaurantnameController.dispose();
     _locationController.dispose();
     _biodescriptionController.dispose();
+    super.dispose();
   }
 
     Future<void> _saveChanges() async {
@@ -56,7 +57,7 @@ class _EditprofileState extends State<Editprofile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: 'Edit Profile')),
+      appBar:PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: 'Edit Profile',)),
       //body
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -177,13 +178,14 @@ class _EditprofileState extends State<Editprofile> {
               //Cacnel Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(onPressed: (){
-                  Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminProfile);
+                child: OutlinedButton(onPressed: (){
+                  Navigator.pop(context);
                 },
-                style: ElevatedButton.styleFrom(
+                style: OutlinedButton.styleFrom(
                   foregroundColor: BBColors.red,
                   side: BorderSide(color: BBColors.red,),
-                  padding: const EdgeInsets.symmetric(vertical: 20)
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
                 ),
                  child:const Text('Cancel',
                  style: TextStyle(

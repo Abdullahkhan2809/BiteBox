@@ -12,7 +12,7 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  int _activeNav = 0;
+  
   @override
 
   Widget build(BuildContext context) {
@@ -55,19 +55,7 @@ class _MenuState extends State<Menu> {
           ),
         ],
       ),
-      //bottom nav
-      bottomNavigationBar: BBBottomNavBar(
-        activeIndex: _activeNav,
-        onTap: (i) => setState(() => _activeNav = i),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: BBColors.red,
-        shape: const CircleBorder(),
-        elevation: 4,
-        child: const Icon(Icons.add, color: Colors.white, size: 26),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    
     );
   }
 }

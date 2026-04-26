@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
               splashIconSize: 200,
               splashTransition: SplashTransition.scaleTransition,
               pageTransitionType: PageTransitionType.bottomToTop,
-              nextScreen: const ProfileScreen(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
+              nextScreen: const LoginAdmin(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
               backgroundColor: BBColors.darkRed,
             ),
         ...BiteBoxRoutes.getRoutes(), // ← all named routes registered

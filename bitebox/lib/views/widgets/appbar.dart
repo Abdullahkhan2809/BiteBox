@@ -4,11 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppbarWidget extends StatelessWidget {
   final String title;
-  const AppbarWidget({super.key, required this.title});
+  final Widget? leading;
+  const AppbarWidget({super.key, required this.title, this.leading});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leading: leading,
       backgroundColor: BBColors.darkRed,
         toolbarHeight: 74,
         shape: const RoundedRectangleBorder(

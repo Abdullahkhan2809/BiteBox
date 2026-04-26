@@ -1,4 +1,5 @@
 import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/core/toast.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/floatingicons.dart';
@@ -32,13 +33,8 @@ class _LoginAdminState extends State<LoginAdmin> {
       print('Admin login attempt: $data');
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Logged in successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Navigate to Dashboard logic here
+        BBToast.showToast(context,'Logged in Successfully!');
+        Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot);
       }
       setState(() => _isLoading = false);
     }

@@ -13,36 +13,37 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   // ── Hardcoded data for now (replace with your Hive/backend model later) ──
-  final String _name           = 'Abdullah Khan';
-  final String _role           = 'Restaurant Admin';
-  final String _email          = 'john@restaurant.com';
-  final String _phone          = '+92 300 1234567';
-  final String _location       = 'Karachi, Pakistan';
-  final String _restaurant     = 'The Grand Table';
-  final int    _totalOrders    = 220;
-  final int    _totalMenuItems = 20;
-  final double _rating         = 4.6;
+  final String _name = 'Abdullah Khan';
+  final String _role = 'Restaurant Admin';
+  final String _email = 'john@restaurant.com';
+  final String _phone = '+92 300 1234567';
+  final String _location = 'Karachi, Pakistan';
+  final String _restaurant = 'The Grand Table';
+  final int _totalOrders = 220;
+  final int _totalMenuItems = 20;
+  final double _rating = 4.6;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: 'Admin Profile')),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(74),
+        child: AppbarWidget(title: 'Admin Profile'),
+      ),
 
       body: SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.all(16),
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-             color: BBColors.surface2,
-              borderRadius: BorderRadius.circular(15)
+            color: BBColors.surface2,
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Column(
             children: [
-          
               const SizedBox(height: 10),
-          
+
               // ── Avatar ──
               Container(
                 width: 110,
@@ -58,9 +59,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-          
+
               const SizedBox(height: 12),
-          
+
               // ── Name ──
               Text(
                 _name.toUpperCase(),
@@ -70,12 +71,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   letterSpacing: 1.2,
                 ),
               ),
-          
+
               const SizedBox(height: 8),
-          
+
               // ── Role badge ──
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: BBColors.darkRed,
                   borderRadius: BorderRadius.circular(20),
@@ -89,15 +93,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-          
+
               const SizedBox(height: 20),
-          
+
               // ── Stats row ──
               Row(
                 children: [
-                  _buildStatCard(label: 'ORDERS',     value: '$_totalOrders'),
+                  _buildStatCard(label: 'ORDERS', value: '$_totalOrders'),
                   const SizedBox(width: 10),
-                  _buildStatCard(label: 'MENU ITEMS', value: '$_totalMenuItems'),
+                  _buildStatCard(
+                    label: 'MENU ITEMS',
+                    value: '$_totalMenuItems',
+                  ),
                   const SizedBox(width: 10),
                   _buildStatCard(
                     label: 'RATING',
@@ -106,9 +113,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-          
+
               const SizedBox(height: 20),
-          
+
               // ── Profile info card ──
               Container(
                 width: double.infinity,
@@ -129,51 +136,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildInfoRow(label: 'Email',      value: _email),
+                    _buildInfoRow(label: 'Email', value: _email),
                     _buildDivider(),
-                    _buildInfoRow(label: 'Phone',      value: _phone),
+                    _buildInfoRow(label: 'Phone', value: _phone),
                     _buildDivider(),
-                    _buildInfoRow(label: 'Location',   value: _location),
+                    _buildInfoRow(label: 'Location', value: _location),
                     _buildDivider(),
                     _buildInfoRow(label: 'Restaurant', value: _restaurant),
                   ],
                 ),
               ),
-          
+
               const SizedBox(height: 24),
-          
+
               // ── Edit Profile button ──
               _buildActionButton(
                 label: 'Edit Profile',
                 filled: true,
                 onPressed: () {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    BiteBoxRoutes.adminEditProfile
-                  );
+                  Navigator.pushNamed(context, BiteBoxRoutes.adminEditProfile);
                 },
               ),
-          
+
               const SizedBox(height: 12),
-          
+
               // ── Change Password button ──
               _buildActionButton(
                 label: 'Change Password',
                 filled: false,
                 onPressed: () {
-                  Navigator.pushNamed(context,BiteBoxRoutes.forgotPassword);
+                  Navigator.pushNamed(context, BiteBoxRoutes.forgotPassword);
                 },
               ),
-          
+
               const SizedBox(height: 12),
-          
+
               // ── Log out button ──
               _buildActionButton(
                 label: 'Log out',
                 filled: false,
                 onPressed: () => _showLogoutDialog(),
               ),
-          
+
               const SizedBox(height: 20),
             ],
           ),
@@ -194,9 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(
           color: isRating ? const Color(0xFF2A1A1A) : BBColors.border,
           borderRadius: BorderRadius.circular(12),
-          border: isRating
-              ? Border.all(color: BBColors.red, width: 1)
-              : null,
+          border: isRating ? Border.all(color: BBColors.red, width: 1) : null,
         ),
         child: Column(
           children: [
@@ -232,10 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.poppins(
-              color: Colors.grey,
-              fontSize: 12,
-            ),
+            style: GoogleFonts.poppins(color: Colors.grey, fontSize: 12),
           ),
           const SizedBox(height: 4),
           Text(
@@ -253,10 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ── Divider ──
   Widget _buildDivider() {
-    return Divider(
-      color: Colors.white.withOpacity(0.08),
-      height: 1,
-    );
+    return Divider(color: Colors.white.withOpacity(0.08), height: 1);
   }
 
   // ── Action button ──
@@ -314,18 +310,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: BBColors.surface2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title:  Text(
+        title: Text(
           'Log Out',
-          style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        content:  Text(
+        content: Text(
           'Are you sure you want to log out?',
-          style: GoogleFonts.poppins(color: Colors.grey ),
+          style: GoogleFonts.poppins(color: Colors.grey),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: GoogleFonts.poppins(color: Colors.grey ,fontWeight: FontWeight.w600)),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                color: Colors.grey,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -337,7 +342,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            child: Text('Log Out', style: GoogleFonts.poppins(color: Colors.white ,fontWeight: FontWeight.w600)),
+            child: Text(
+              'Log Out',
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

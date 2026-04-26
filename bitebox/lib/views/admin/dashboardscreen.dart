@@ -1,6 +1,6 @@
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:bitebox/views/widgets/bottomnavigationbar.dart';
 import 'package:bitebox/views/widgets/stat_card.dart';
 import 'package:bitebox/views/widgets/dashboard_Shell.dart';
 import 'package:bitebox/views/widgets/colors.dart';
@@ -14,7 +14,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _activeNav = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -24,22 +23,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // ── AppBar (kept exactly as yours, just colours from design system) ──
       appBar: PreferredSize(preferredSize: const Size.fromHeight(74), child: AppbarWidget(title: "Dashboard")),
 
-
-      // ── Bottom Navigation Bar (your existing widget) ──
-      bottomNavigationBar: BBBottomNavBar(
-        activeIndex: _activeNav,
-        onTap: (i) => setState(() => _activeNav = i),
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: 
-      (){
-        
-      },
-      backgroundColor: BBColors.red,
-    shape: const CircleBorder(),
-    elevation: 4,
-    child: const Icon(Icons.add, color: Colors.white, size: 26),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       // ── Body ──────────────────────────────────────────────────────────────
       body: SafeArea(
         child: SingleChildScrollView(
@@ -95,7 +78,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminLiveOrders);
+                    },
                     child: const Text(
                       'View all',
                       style: TextStyle(

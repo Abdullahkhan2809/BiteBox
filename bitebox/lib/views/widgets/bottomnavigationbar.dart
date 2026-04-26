@@ -16,8 +16,9 @@ class BBBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
       child: BottomAppBar(
+
         color: BBColors.darkRed,
         shape: const CircularNotchedRectangle(),
         notchMargin: 6,
@@ -96,7 +97,7 @@ class _NavIcon extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 24,
+              size: 25,
               color: isActive ? BBColors.red : BBColors.muted,
             ),
             const SizedBox(height: 2),
