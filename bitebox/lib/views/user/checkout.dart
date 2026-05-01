@@ -314,7 +314,7 @@ class _CheckoutState extends State<Checkout> {
                       //button to add the order to the admin Side
                       ElevatedButton(
                         onPressed: () {
-                          //add order to the retaurant live orders as new
+                          //add order to the retaurant live orders as new and navgative to popup
                         },
                         style: ButtonStyle(
                           minimumSize: WidgetStateProperty.all(

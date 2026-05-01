@@ -226,6 +226,27 @@ class _LoginAdminState extends State<LoginAdmin> {
                         ),
                       ),
                     ),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, BiteBoxRoutes.home);
+                      },
+                      child: RichText(
+                        text:  TextSpan(
+                          style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70),
+                          children: [
+                            TextSpan(text: "Hungry? "),
+                            TextSpan(
+                              text: 'Let’s go home',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

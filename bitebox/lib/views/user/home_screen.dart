@@ -1,3 +1,4 @@
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/menuitemCardUser.dart';
 import 'package:bitebox/views/widgets/restaurantcard.dart';
@@ -108,7 +109,7 @@ class _UserHomestate extends State<UserHome> {
                             title:  Text('My Cart',
                                 style: GoogleFonts.poppins(color: Colors.white)),
                             onTap: () {
-                              // move to the cart page
+                              Navigator.pushNamed(context,BiteBoxRoutes.cart);
                             },
                           ),
                           ListTile(
@@ -117,7 +118,7 @@ class _UserHomestate extends State<UserHome> {
                             title:  Text('Become a Vendor',
                                 style: GoogleFonts.poppins(color: Colors.white)),
                             onTap: () {
-                              //move to admin login page
+                                BiteBoxRoutes.logout(context);
                             },
                           ),
                           ListTile(
@@ -126,7 +127,7 @@ class _UserHomestate extends State<UserHome> {
                             title: Text('About Us',
                                 style: GoogleFonts.poppins(color: Colors.white)),
                             onTap: () {
-                              // Move the aboutus
+                                Navigator.pushNamed(context,BiteBoxRoutes.aboutUs);
                             },
                           ),
                         ],
@@ -259,7 +260,7 @@ class _UserHomestate extends State<UserHome> {
         child: FloatingActionButton.extended(
           backgroundColor: BBColors.darkRed,
           onPressed: () {
-            // to the cart
+            Navigator.pushNamed(context,BiteBoxRoutes.cart);
           },
           label:  Text('Orders',style: GoogleFonts.poppins(),),
           icon: const Icon(Icons.shopping_cart),

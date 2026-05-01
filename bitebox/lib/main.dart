@@ -1,13 +1,9 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:bitebox/core/routes.dart';
-import 'package:bitebox/models/menu_item_model.dart';
-import 'package:bitebox/models/retaurant_model.dart';
-import 'package:bitebox/views/admin/add_menu_items.dart';
-import 'package:bitebox/views/admin/admin_live_order.dart';
 import 'package:bitebox/views/auth/view/login_admin.dart';
-import 'package:bitebox/views/user/aboutus.dart';
 
 import 'package:bitebox/views/user/home_screen.dart';
+import 'package:bitebox/views/user/popup.dart';
 import 'package:bitebox/views/user/restaurent_menu_screen.dart';
 import 'package:bitebox/views/admin/profile/admin_profile.dart';
 import 'package:page_transition/page_transition.dart';
@@ -15,6 +11,7 @@ import 'package:bitebox/views/widgets/colors.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:bitebox/views/admin/dashboardscreen.dart';
+
 
 
 void main() async {
@@ -63,7 +60,7 @@ class MyApp extends StatelessWidget {
               splashIconSize: 200,
               splashTransition: SplashTransition.scaleTransition,
               pageTransitionType: PageTransitionType.bottomToTop,
-              nextScreen: const LoginAdmin(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
+              nextScreen: const LoginAdmin() ,// _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
               backgroundColor: BBColors.darkRed,
             ),
         ...BiteBoxRoutes.getRoutes(), // ← all named routes registered

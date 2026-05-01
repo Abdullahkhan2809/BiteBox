@@ -1,3 +1,4 @@
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +12,7 @@ class FeedbackFooter extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          //navigate to feedback screen
+         Navigator.pushNamed(context,BiteBoxRoutes.feedback);
         },
         child: Container(
           height: 120,

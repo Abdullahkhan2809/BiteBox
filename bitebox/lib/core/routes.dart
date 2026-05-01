@@ -12,8 +12,11 @@ import 'package:bitebox/views/user/aboutus.dart';
 import 'package:bitebox/views/user/adduserdetails.dart';
 import 'package:bitebox/views/user/cart_screen.dart';
 import 'package:bitebox/views/user/checkout.dart';
+import 'package:bitebox/views/user/feedback.dart' as bb_feedback;
 import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/user/popup.dart';
+import 'package:bitebox/views/user/restaurent_menu_screen.dart';
+import 'package:bitebox/models/retaurant_model.dart';
 import 'package:flutter/material.dart';
 
 class BiteBoxRoutes {
@@ -62,12 +65,25 @@ class BiteBoxRoutes {
       },
       //user side routes
       home: (_) => const UserHome(),
-      // menu:(_)=>const
+      menu: (context) {
+        final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+        return RestaurentMenuScreen(restaurant: restaurant);
+      },
       cart: (_) => const CartScreen(),
       UserDetails: (_) => const Adduserdetails(),
-      feedback: (_) => const Checkout(),
+      feedback: (_) => const bb_feedback.Feedback(),
       aboutUs: (_) => const Aboutus(),
-      popup: (_) => const Popup(),
+      popup: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return OrderConfirmationPopup(
+          customerName: args['customerName'] ?? '',
+          cmsId: args['cmsId'] ?? '',
+          items: args['items'] ?? [],
+          totalAmount: args['totalAmount'] ?? 0.0,
+          paymentMethod: args['paymentMethod'] ?? '',
+        );
+      },
+      checkout:(_)=> const Checkout(),
     };
   }
 

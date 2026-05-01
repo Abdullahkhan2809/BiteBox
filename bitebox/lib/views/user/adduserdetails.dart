@@ -1,3 +1,4 @@
+import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +212,7 @@ class _AdduserdetailsState extends State<Adduserdetails> {
             const SizedBox(height: 24),
 
                ElevatedButton(onPressed: (){
-              //post to next project 
+              Navigator.pushNamed(context,BiteBoxRoutes.checkout);
            }, 
            style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(BBColors.red),

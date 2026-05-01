@@ -1,6 +1,5 @@
 import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
-import 'package:bitebox/views/widgets/bottomnavigationbar.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'dart:ui';
@@ -24,165 +23,165 @@ class _AddmenuItemsState extends State<AddmenuItems> {
       ),
 
       //container to add the items
-      body: Center(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Card(
-                elevation: 4,
-                color: BBColors.surface2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  side: BorderSide(color: BBColors.hintText, width: 1.5),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Center(
-                        child: Text(
-                          'Add New Item',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-
-                      const LabelText('Name Item'),
-                      const RoundedTextField(hintText: 'Item name...'),
-
-                      const LabelText('Item Category'),
-                      RoundedDropdownField(
-                        value: selected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            selected = newValue;
-                          });
-                        },
-                      ),
-
-                      const LabelText('Price'),
-                      const RoundedTextField(
-                        hintText: 'Enter price...',
-                        keyboardType: TextInputType.number,
-                      ),
-
-                      const LabelText('Description'),
-                      const RoundedTextField(
-                        hintText: 'Description',
-                        maxLines: 3,
-                      ),
-                      const LabelText('Item Icon'),
-                      GestureDetector(
-                        onTap: () {
-                          // Implement Image Picker
-                        },
-                        child: CustomPaint(
-                          foregroundPainter: DashedBorderPainter(
-                            color: Colors.grey,
-                          ),
-                          child: Container(
-                            width: 130,
-                            height: 130,
-                            color: Colors.transparent,
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Item',
-                                  style: TextStyle(
-                                    color: BBColors.hintText,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                Text(
-                                  'Picture',
-                                  style: TextStyle(
-                                    color: BBColors.hintText,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+            child: ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                Card(
+                  elevation: 4,
+                  color: BBColors.surface2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: BorderSide(color: BBColors.hintText, width: 1.5),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Center(
+                          child: Text(
+                            'Add New Item',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // Action Buttons: Cancel and Save
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 97,
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot, arguments: 0);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: BBColors.surface2,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
+                        const SizedBox(height: 14),
+        
+                        const LabelText('Name Item'),
+                        const RoundedTextField(hintText: 'Item name...'),
+        
+                        const LabelText('Item Category'),
+                        RoundedDropdownField(
+                          value: selected,
+                          onChanged: (newValue) {
+                            setState(() {
+                              selected = newValue;
+                            });
+                          },
+                        ),
+        
+                        const LabelText('Price'),
+                        const RoundedTextField(
+                          hintText: 'Enter price...',
+                          keyboardType: TextInputType.number,
+                        ),
+        
+                        const LabelText('Description'),
+                        const RoundedTextField(
+                          hintText: 'Description',
+                          maxLines: 3,
+                        ),
+                        const LabelText('Item Icon'),
+                        GestureDetector(
+                          onTap: () {
+                            // Implement Image Picker
+                          },
+                          child: CustomPaint(
+                            foregroundPainter: DashedBorderPainter(
+                              color: Colors.grey,
+                            ),
+                            child: Container(
+                              width: 130,
+                              height: 130,
+                              color: Colors.transparent,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Item',
+                                    style: TextStyle(
+                                      color: BBColors.hintText,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Picture',
+                                    style: TextStyle(
+                                      color: BBColors.hintText,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(width: 15),
-                          SizedBox(
-                            height: 40,
-                            width: 90,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // TODO: Handle Save Item
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: BBColors.red,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                        ),
+        
+                        const SizedBox(height: 30),
+        
+                        // Action Buttons: Cancel and Save
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              width: 97,
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot, arguments: 0);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: BBColors.surface2,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                 ),
-                              ),
-                              child: const Text(
-                                'Save',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(width: 15),
+                            SizedBox(
+                              height: 40,
+                              width: 90,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // TODO: Handle Save Item
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: BBColors.red,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
       ),
     );
   }
 }
-
 // Reusable rounded input field widget
 class RoundedTextField extends StatelessWidget {
   final String hintText;
