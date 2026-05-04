@@ -1,8 +1,6 @@
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/menuitem_card.dart';
 import 'package:flutter/material.dart';
-import 'package:bitebox/views/widgets/colors.dart';
-import 'package:bitebox/views/widgets/bottomnavigationbar.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});

@@ -5,6 +5,7 @@ import 'package:bitebox/views/widgets/stat_card.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/status_button_live_orders.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AdminLiveOrder extends StatefulWidget {
   const AdminLiveOrder({super.key});
@@ -112,12 +113,12 @@ class _AdminLiveOrderState extends State<AdminLiveOrder> {
                           color: BBColors.redMuted,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Text(
+                        child:  Text(
                           '8 ACTIVE',
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Color.fromARGB(255, 255, 8, 0),
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
                       ),

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'dart:ui';
 
+import 'package:google_fonts/google_fonts.dart';
+
 class AddmenuItems extends StatefulWidget {
   const AddmenuItems({super.key});
 
@@ -129,7 +131,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                                   Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot, arguments: 0);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: BBColors.surface2,
+                                  backgroundColor: BBColors.surface,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
@@ -137,9 +139,10 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                                 ),
                                 child: Text(
                                   'Cancel',
-                                  style: TextStyle(
+                                  style: GoogleFonts.poppins(
                                     color: Colors.white,
-                                    fontSize: 16,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500
                                   ),
                                 ),
                               ),
@@ -159,12 +162,12 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'Save',
-                                  style: TextStyle(
+                                  style:GoogleFonts.poppins(
                                     color: Colors.white,
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
