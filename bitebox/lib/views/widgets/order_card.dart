@@ -1,3 +1,4 @@
+import 'package:bitebox/models/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 
@@ -42,7 +43,7 @@ class BBOrderCard extends StatelessWidget {
     required this.customerName,
     required this.items,
     required this.status,
-    required this.time,
+    required this.time, required Order order,
   });
 
   @override

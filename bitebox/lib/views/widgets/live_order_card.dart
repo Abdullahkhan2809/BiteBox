@@ -1,8 +1,13 @@
+import 'dart:math';
+
+import 'package:bitebox/models/order_model.dart';
+import 'package:bitebox/providers/order_provider.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/status_badge.dart';
 import 'package:bitebox/views/widgets/payment_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 
 class LiveOrderCard extends StatefulWidget {
@@ -13,6 +18,8 @@ class LiveOrderCard extends StatefulWidget {
   final String paymentType;
   final String status;
   final int price;
+  final VoidCallback? onAccept;
+  final Order order;
 
   const LiveOrderCard._internal({
     super.key,
@@ -22,7 +29,9 @@ class LiveOrderCard extends StatefulWidget {
     required this.items,
     required this.price,
     required this.paymentType,
-    required this.status,
+    required this.status, 
+    required this.order,
+    this.onAccept,
   });
 
   factory LiveOrderCard({
@@ -33,18 +42,22 @@ class LiveOrderCard extends StatefulWidget {
     required String items,
     required int price,
     required String paymentType,
-    required String status,
+    required String status, 
+    required Order order,
+     VoidCallback? onAccept,
   }) {
     return LiveOrderCard._internal(
       key: key,
       orderNumber: orderNumber ??
-          (DateTime.now().microsecondsSinceEpoch % 10000),
+          Random().nextInt(9000)+1000,
       name: name,
       cms: cms,
       items: items,
       price: price,
       paymentType: paymentType,
       status: status,
+      order: order,
+      onAccept: onAccept,
     );
   }
 
@@ -136,11 +149,24 @@ class _LiveOrderCardState extends State<LiveOrderCard> {
 
               // Accept Button (Green Circle)
               GestureDetector(
-                onTap: () {},
+                onTap: widget.onAccept != null
+                    ? () {
+                        // Optimistically trigger the callback
+                        widget.onAccept!();
+                        
+                        // Provide immediate visual feedback if needed
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Updating order status...'),
+                            duration: Duration(milliseconds: 500),
+                          ),
+                        );
+                      }
+                    : null,
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF00FF00), // Bright green
+                    color: BBColors.green, // Bright green
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.check, color: Colors.white, size: 24),
@@ -150,7 +176,40 @@ class _LiveOrderCardState extends State<LiveOrderCard> {
 
               // Delete Button (White Circle)
               GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Cancel Order'),
+                      content: const Text('Are you sure you want to cancel this order?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('No'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true && mounted) {
+                    final success = await context.read<OrderProvider>().advanceOrderStatus(
+                      orderId: widget.order.id!,
+                      currentStatus: 'ready', // Forcing 'completed' status as a way to clear from live view
+                    );
+                    
+                    if (mounted && !success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to cancel order'),
+                        ),
+                      );
+                    }
+                  }
+                },
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(

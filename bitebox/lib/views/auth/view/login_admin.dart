@@ -1,9 +1,11 @@
 import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/core/toast.dart';
+import 'package:bitebox/providers/auth_provider.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/floatingicons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class LoginAdmin extends StatefulWidget {
   const LoginAdmin({super.key});
@@ -21,24 +23,36 @@ class _LoginAdminState extends State<LoginAdmin> {
   bool _obscurePassword = true;
 
   Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+  if (_formKey.currentState!.validate()) {
+    setState(() => _isLoading = true);
 
-      final data = {
-        'email': _emailController.text.trim(),
-        'password': _passwordController.text,
-      };
+    // call AuthProvider instead of dummy delay
+    final authProvider = context.read<AuthProvider>();
 
-      await Future.delayed(const Duration(seconds: 1)); // Simulate network
-      print('Admin login attempt: $data');
+    final success = await authProvider.staffloggin(
+      email:    _emailController.text.trim(),
+      password: _passwordController.text,
+    );
 
-      if (mounted) {
-        BBToast.showToast(context,'Logged in Successfully!');
-        Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot);
+    if (mounted) {
+      if (success) {
+        BBToast.showToast(context, 'Logged in Successfully!');
+        Navigator.pushReplacementNamed(
+          context,
+          BiteBoxRoutes.adminRoot,
+          arguments: 0, // start on dashboard tab
+        );
+      } else {
+        // show error from provider
+        BBToast.showToast(
+          context,
+          authProvider.errorMessage ?? 'Login failed',
+        );
       }
-      setState(() => _isLoading = false);
     }
+    setState(() => _isLoading = false);
   }
+}
 
   @override
   void dispose() {
