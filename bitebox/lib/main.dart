@@ -2,14 +2,18 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/models/retaurant_model.dart';
+import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/providers/cart_provider.dart';
+import 'package:bitebox/providers/order_provider.dart';
+import 'package:bitebox/providers/restaurant_provider.dart';
 import 'package:bitebox/views/auth/view/login_admin.dart';
-
 import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/user/popup.dart';
 import 'package:bitebox/views/user/restaurent_menu_screen.dart';
 import 'package:bitebox/views/admin/profile/admin_profile.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:bitebox/views/widgets/colors.dart';
+import 'package:provider/provider.dart';
 import "package:flutter/material.dart";
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:bitebox/views/admin/dashboardscreen.dart';
@@ -35,7 +39,17 @@ void main() async {
     print('Hive error $e');
   }
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()..loadSession()),
+        ChangeNotifierProvider(create: (context) => RestaurantProvider()..loadRestaurants()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

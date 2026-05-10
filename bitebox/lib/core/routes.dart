@@ -50,8 +50,16 @@ class BiteBoxRoutes {
       login: (_) => const LoginAdmin(),
       signup: (_) => const SignupAdmin(),
       forgotPassword: (_) => const ForgetpasswordAdmin(),
-      resetPassword: (_) => const ResetpasswordAdmin(),
-      otpVerify: (_) => const OtpVerficationAdmin(),
+      
+      otpVerify: (context){
+        final email= ModalRoute.of(context)!.settings.arguments as String;
+        return OtpVerficationAdmin(email:email);
+      },
+
+      resetPassword:(context){
+        final resetToken=ModalRoute.of(context)!.settings.arguments as String;
+        return ResetpasswordAdmin(resetToken:resetToken);
+      },
 
       //admin routes
 
