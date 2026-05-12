@@ -7,12 +7,17 @@ class MenuitemCard extends StatefulWidget {
   final String category;
   final String? itemDescription;
   final String? price;
+  final VoidCallback? onEdit;
+  final VoidCallback? ondelete;
+
   const MenuitemCard({
     super.key,
     required this.title,
     required this.category,
     required this.itemDescription,
     required this.price,
+    this.onEdit,
+    this.ondelete,
   });
 
   @override
@@ -90,7 +95,7 @@ class _MenuitemCardState extends State<MenuitemCard> {
                   radius: 16,
                   backgroundColor: Colors.white,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: widget.onEdit,
                     padding: EdgeInsets.zero,
                     icon: Icon(Icons.edit, color: BBColors.red, size: 18),
                   ),
@@ -100,7 +105,7 @@ class _MenuitemCardState extends State<MenuitemCard> {
                   radius: 16,
                   backgroundColor: BBColors.redMuted,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: widget.ondelete,
                     padding: EdgeInsets.zero,
                     icon: Icon(Icons.delete, color: Colors.white, size: 18),
                   ),
