@@ -24,6 +24,7 @@ class OrderProvider extends ChangeNotifier {
 
   Future<bool> placeOrder({
     required String studentId,
+    required String studentName,
     required String restaurantId,
     required CartProvider cartProvider, // passed in so we can clear cart
     required String paymentMethod,
@@ -41,6 +42,7 @@ class OrderProvider extends ChangeNotifier {
 
     final result = await _service.placeOrder(
       studentId:     studentId,
+      studentName:   studentName,
       restaurantId:  restaurantId,
       items:         items,
       totalAmount:   cartProvider.total,

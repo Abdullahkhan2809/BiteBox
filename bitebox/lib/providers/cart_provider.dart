@@ -39,6 +39,21 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void increment(String itemId) {
+    final index = _entries.indexWhere((e) => e.items.id == itemId);
+    if (index != -1) {
+      _entries[index].quantity++;
+      notifyListeners();
+    }
+  }
+
+  void decrement(String itemId) {
+    final index = _entries.indexWhere((e) => e.items.id == itemId);
+    if (index != -1) {
+      removeItem(itemId);
+    }
+  }
+
   void removeItem(String itemId) {
     final index = _entries.indexWhere((e) => e.items.id == itemId);
     if (index != -1) {

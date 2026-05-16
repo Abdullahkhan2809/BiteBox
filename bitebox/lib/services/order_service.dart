@@ -21,7 +21,7 @@ class OrderService {
     required List<Order_items> items,
     required double totalAmount,
     required String paymentMethod, // 'cash' | 'onlinepayment'
-    String? note,
+    String? note, required String studentName,
   }) async {
     try {
       final order = Order(

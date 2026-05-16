@@ -151,4 +151,6 @@ class MenuService {
       return {'success': false, 'message':e.toString()};
     }
   }
+
+  Future<dynamic> getMenu(String id) async {}
 }

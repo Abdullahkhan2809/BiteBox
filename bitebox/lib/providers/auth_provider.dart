@@ -147,7 +147,33 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //help 
+  // ── update complete student details (from adduserdetails form) ──────────────────
+  Future<void> updateStudentDetails({
+    required String name,
+    required String phone,
+    required String cmsid,
+    required String paymentMethod,
+  }) async {
+    _student = StudentModel(
+      cmsid: cmsid,
+      name: name,
+      phone: phone,
+      category: _student?.category ?? 'student',
+      paymentMethod: paymentMethod,
+    );
+
+    await _storage.saveStudent(
+      cmsId: cmsid,
+      name: name,
+      phone: phone,
+      category: _student!.category,
+      paymentMethod: paymentMethod,
+    );
+
+    notifyListeners();
+  }
+
+  //help
    void _setLoading(bool value) {
     _isloading = value;
     notifyListeners();

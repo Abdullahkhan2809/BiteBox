@@ -1,7 +1,11 @@
 import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/providers/cart_provider.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
+import 'package:bitebox/views/widgets/indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Adduserdetails extends StatefulWidget {
   const Adduserdetails({super.key});
@@ -15,6 +19,19 @@ class _AdduserdetailsState extends State<Adduserdetails> {
   final _fullname = TextEditingController();
   final _PhoneNumber = TextEditingController();
   final _CMSID = TextEditingController();
+  String? _selectedPayment = 'Cash';
+
+  @override
+  void initState() {
+    super.initState();
+    final auth = context.read<AuthProvider>();
+    if (auth.student != null) {
+      _fullname.text = auth.student!.name;
+      _PhoneNumber.text = auth.student!.phone;
+      _CMSID.text = auth.student!.cmsid;
+      _selectedPayment = auth.student!.paymentMethod;
+    }
+  }
 
   @override
   void dispose() {
@@ -36,6 +53,8 @@ class _AdduserdetailsState extends State<Adduserdetails> {
         child: Column(
           children: [
             //set the indicator
+            const Indicator(current_step: 2),
+            const SizedBox(height: 24),
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
@@ -125,112 +144,156 @@ class _AdduserdetailsState extends State<Adduserdetails> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 24,),
+                  SizedBox(height: 24),
                   //payment method header
                   Container(
-                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     width: double.infinity,
                     height: 40,
-                    decoration:BoxDecoration(
-                       color: BBColors.surface2,
+                    decoration: BoxDecoration(
+                      color: BBColors.surface2,
                       borderRadius: BorderRadius.circular(35),
-                    ) ,
-                    child: Text('PAYMENT METHOD', style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),),
+                    ),
+                    child: Text(
+                      'PAYMENT METHOD',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
 
-                  SizedBox(height: 16,),
-                 Container(
-              padding: EdgeInsets.all(16),
-              width: double.infinity,
-              height: 180,
-              decoration: BoxDecoration(
-                color: BBColors.surface2,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Align(
-                child: Column(
-                  children: [
-                    Text('Order Summary', style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),),
-                    const SizedBox(height: 16,),
-                    Row(
+                  SizedBox(height: 16),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    width: double.infinity,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      color: BBColors.surface2,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Consumer<CartProvider>(
+                      builder: (context, cartProvider, _) {
+                        final subtotal = cartProvider.total;
+                        final discount = 0.0;
+                        final total = subtotal - discount;
+                        return Align(
+                          child: Column(
+                            children: [
+                              Text(
+                                'Order Summary',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Subtotal',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: BBColors.hintText,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    'Rs. ${subtotal.toStringAsFixed(0)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Discount',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: BBColors.hintText,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    '- Rs. ${discount.toStringAsFixed(0)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: BBColors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Total',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    'Rs. ${total.toStringAsFixed(0)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color.fromARGB(255, 255, 18, 18),
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // SizedBox(height: 16,),
+                  const SizedBox(height: 24),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_keyform.currentState!.validate()) {
+                        context.read<AuthProvider>().updateStudentDetails(
+                          name: _fullname.text,
+                          phone: _PhoneNumber.text,
+                          cmsid: _CMSID.text,
+                          paymentMethod: _selectedPayment ?? 'cash',
+                        );
+                        Navigator.pushNamed(context, BiteBoxRoutes.checkout);
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(BBColors.red),
+                      foregroundColor: WidgetStatePropertyAll(Colors.white),
+                      padding: WidgetStateProperty.all(EdgeInsets.all(24)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('Subtotal', style: TextStyle(
-                          fontSize: 15,
-                          color: BBColors.hintText,
-                          fontWeight: FontWeight.w600,
-                        ),),
-                        Spacer(),
-                        Text('Rs. 1234', style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),)
+                        Text(
+                          'Proceed to Checkout',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward_ios_rounded, size: 16),
                       ],
                     ),
-                    const SizedBox(height: 16,),
-                    Row(
-                      children: [
-                        Text('Discount', style: TextStyle(
-                          fontSize: 15,
-                          color: BBColors.hintText,
-                          fontWeight: FontWeight.w600,
-                        ),),
-                        Spacer(),
-                        Text('- Rs. 1234', style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: BBColors.green,
-                        ),)
-                      ],
-                    ),
-                    const SizedBox(height: 16,),
-                    Row(
-                      children: [
-                        Text('Total', style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),),
-                        Spacer(),
-                        Text('Rs. 1234', style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color:const Color.fromARGB(255, 255, 18, 18),
-                          fontSize: 20
-                        ),)
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-
-            // SizedBox(height: 16,),
-            const SizedBox(height: 24),
-
-               ElevatedButton(onPressed: (){
-              Navigator.pushNamed(context,BiteBoxRoutes.checkout);
-           }, 
-           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(BBColors.red),
-            foregroundColor: WidgetStatePropertyAll(Colors.white),
-            padding: WidgetStateProperty.all(EdgeInsets.all(24))
-           ),
-           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Proceed to Checkout', style:TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600
-              ) ),
-              SizedBox(width: 8,),
-              Icon(Icons.arrow_forward_ios_rounded, size: 16,)
-            ],
-           ),),
+                  ),
                 ],
               ),
             ),

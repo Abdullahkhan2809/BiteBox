@@ -82,13 +82,13 @@ class BiteBoxRoutes {
       feedback: (_) => const bb_feedback.Feedback(),
       aboutUs: (_) => const Aboutus(),
       popup: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
         return OrderConfirmationPopup(
-          customerName: args['customerName'] ?? '',
-          cmsId: args['cmsId'] ?? '',
-          items: args['items'] ?? [],
-          totalAmount: args['totalAmount'] ?? 0.0,
-          paymentMethod: args['paymentMethod'] ?? '',
+          customerName: args?['customerName'],
+          cmsId: args?['cmsId'],
+          items: args?['items'],
+          totalAmount: args?['totalAmount'],
+          paymentMethod: args?['paymentMethod'],
         );
       },
       checkout:(_)=> const Checkout(),
