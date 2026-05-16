@@ -1,21 +1,120 @@
 import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/core/toast.dart';
+import 'package:bitebox/models/menu_item_model.dart';
+import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/services/menu_service.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
+import 'package:bitebox/views/widgets/menuitem_card.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'dart:ui';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AddmenuItems extends StatefulWidget {
-  const AddmenuItems({super.key});
+  final MenuItem? existingItem;
 
+  const AddmenuItems({super.key, this.existingItem});
   @override
   State<AddmenuItems> createState() => _AddmenuItemsState();
 }
 
 class _AddmenuItemsState extends State<AddmenuItems> {
   String? selected = 'Meal';
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile? _selectedImage;
 
+  final MenuService _menuService =MenuService();
+  final _formkey=GlobalKey<FormState>();
+  
+  //controller
+  late final TextEditingController _namecontorller;
+  late final TextEditingController _pricecontroller;
+  late final TextEditingController _descriptioncontorller;
+
+  bool _isloading=false;
+
+  //for edit and add
+  bool get isEditing=>  widget.existingItem!=null;
+
+    @override
+  void initState() {
+    super.initState();
+    // if editing, pre-fill all fields with existing item data
+    _namecontorller = TextEditingController(
+      text: widget.existingItem?.name ?? '',
+    );
+    _pricecontroller = TextEditingController(
+      text: widget.existingItem?.price.toStringAsFixed(0) ?? '',
+    );
+    _descriptioncontorller = TextEditingController(
+      text: widget.existingItem?.description ?? '',
+    );
+    selected = widget.existingItem?.tag ?? 'Meal';
+  }
+
+  @override
+  void dispose(){
+    _namecontorller.dispose();
+    _pricecontroller.dispose();
+    _descriptioncontorller.dispose();
+    super.dispose();
+  }
+
+   Future<void> _saveItem() async {
+    if (!_formkey.currentState!.validate()) return;
+
+    final auth = context.read<AuthProvider>();
+    if (auth.restaurantId == null) {
+      BBToast.showToast(context, 'Restaurant not found');
+      return;
+    }
+
+    setState(() => _isloading = true);
+
+    Map<String, dynamic> result;
+
+    if (isEditing) {
+      // EDIT existing item
+      result = await _menuService.updateMenuItem(
+        itemId:       widget.existingItem!.id,
+        restaurantId: auth.restaurantId!,
+        name:         _namecontorller.text.trim(),
+        description:  _descriptioncontorller.text.trim(),
+        price:        double.parse(_pricecontroller.text.trim()),
+      );
+    } else {
+      // ADD new item
+      result = await _menuService.addMenuItem(
+        restaurantId: auth.restaurantId!,
+        name:         _namecontorller.text.trim(),
+        description:  _descriptioncontorller.text.trim(),
+        price:        double.parse(_pricecontroller.text.trim()),
+        tag:          selected ?? 'Meal',
+        imageUrl:     '', // Phase 6: replace with image picker URL
+      );
+    }
+
+    if (mounted) {
+      if (result['success']) {
+        BBToast.showToast(
+          context,
+          isEditing ? 'Item updated!' : 'Item added!',
+        );
+        // go back to menu tab
+        Navigator.pushReplacementNamed(
+          context,
+          BiteBoxRoutes.adminRoot,
+          arguments: 1, // 1 = menu tab index
+        );
+      } else {
+        BBToast.showToast(context, result['message'] ?? 'Failed to save');
+      }
+    }
+
+    setState(() => _isloading = false);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +126,9 @@ class _AddmenuItemsState extends State<AddmenuItems> {
       //container to add the items
       body: SingleChildScrollView(
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+          child: Form(
+            key: _formkey,
             child: ListView(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -44,10 +145,10 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Center(
+                        Center(
                           child: Text(
-                            'Add New Item',
-                            style: TextStyle(
+                            isEditing ? 'Edit Item' : 'Add New Item',
+                            style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -55,10 +156,14 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                           ),
                         ),
                         const SizedBox(height: 14),
-        
+
                         const LabelText('Name Item'),
-                        const RoundedTextField(hintText: 'Item name...'),
-        
+                        RoundedTextField(
+                          controller: _namecontorller,
+                          hintText: 'Item name...',
+                          validator: (v) => v!.isEmpty ? 'Required' : null,
+                        ),
+
                         const LabelText('Item Category'),
                         RoundedDropdownField(
                           value: selected,
@@ -68,22 +173,32 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                             });
                           },
                         ),
-        
+
                         const LabelText('Price'),
-                        const RoundedTextField(
+                        RoundedTextField(
+                          controller: _pricecontroller,
                           hintText: 'Enter price...',
                           keyboardType: TextInputType.number,
+                          validator: (v) => v!.isEmpty ? 'Required' : null,
                         ),
-        
+
                         const LabelText('Description'),
-                        const RoundedTextField(
+                        RoundedTextField(
+                          controller: _descriptioncontorller,
                           hintText: 'Description',
                           maxLines: 3,
                         ),
                         const LabelText('Item Icon'),
                         GestureDetector(
-                          onTap: () {
-                            // Implement Image Picker
+                          onTap: () async {
+                            final pickedFile = await _imagePicker.pickImage(
+                              source: ImageSource.gallery,
+                            );
+                            if (pickedFile != null) {
+                              setState(() {
+                                _selectedImage = pickedFile;
+                              });
+                            }
                           },
                           child: CustomPaint(
                             foregroundPainter: DashedBorderPainter(
@@ -116,9 +231,9 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                             ),
                           ),
                         ),
-        
+
                         const SizedBox(height: 30),
-        
+
                         // Action Buttons: Cancel and Save
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -128,7 +243,11 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                               height: 40,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushReplacementNamed(context, BiteBoxRoutes.adminRoot, arguments: 0);
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    BiteBoxRoutes.adminRoot,
+                                    arguments: 1,
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: BBColors.surface,
@@ -142,7 +261,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                                   style: GoogleFonts.poppins(
                                     color: Colors.white,
                                     fontSize: 13,
-                                    fontWeight: FontWeight.w500
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
@@ -152,9 +271,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                               height: 40,
                               width: 90,
                               child: ElevatedButton(
-                                onPressed: () {
-                                  // TODO: Handle Save Item
-                                },
+                                onPressed: _isloading ? null : _saveItem,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: BBColors.red,
                                   elevation: 0,
@@ -162,14 +279,23 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                child: Text(
-                                  'Save',
-                                  style:GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                child: _isloading
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(
+                                        'Save',
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
                             ),
                           ],
@@ -181,21 +307,27 @@ class _AddmenuItemsState extends State<AddmenuItems> {
               ],
             ),
           ),
+        ),
       ),
     );
   }
 }
+
 // Reusable rounded input field widget
 class RoundedTextField extends StatelessWidget {
   final String hintText;
   final TextInputType keyboardType;
   final int maxLines;
+  final TextEditingController? controller; // ← added
+  final String? Function(String?)? validator; // ← added
 
   const RoundedTextField({
     super.key,
     required this.hintText,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    this.controller,
+    this.validator,
   });
 
   @override
@@ -206,8 +338,10 @@ class RoundedTextField extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: TextFormField(
+        controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
+        validator: validator,
         style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
           hintText: hintText,
@@ -279,12 +413,12 @@ class DashedBorderPainter extends CustomPainter {
   final double strokeWidth;
   final double dashWidth;
   final double dashSpace;
-
+  final VoidCallback? addpicture;
   DashedBorderPainter({
     this.color = Colors.black,
     this.strokeWidth = 1.5,
     this.dashWidth = 6.0,
-    this.dashSpace = 4.0,
+    this.dashSpace = 4.0, this.addpicture,
   });
 
   @override

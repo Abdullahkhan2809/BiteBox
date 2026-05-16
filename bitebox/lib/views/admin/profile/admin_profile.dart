@@ -1,9 +1,12 @@
 import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/providers/order_provider.dart';
 import 'package:bitebox/views/admin/profile/editprofile.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,6 +29,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final orders = context.watch<OrderProvider>();
+
+    final name = auth.student?.name ?? 'Staff Member';
+    final role = auth.role ?? 'Staff';
+    final email =
+        auth.student?.name ?? '—'; // Phase 6: add email to staff model
+    final phone = auth.student?.phone ?? '—';
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(74),
@@ -64,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               // ── Name ──
               Text(
-                _name.toUpperCase(),
+                name.toUpperCase(),
                 style: GoogleFonts.koulen(
                   color: Colors.white,
                   fontSize: 32,
@@ -85,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  _role.toUpperCase(),
+                  role.toUpperCase(),
                   style: GoogleFonts.koulen(
                     color: Colors.white,
                     fontSize: 16,
@@ -99,11 +111,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // ── Stats row ──
               Row(
                 children: [
-                  _buildStatCard(label: 'ORDERS', value: '$_totalOrders'),
+                  _buildStatCard(
+                    label: 'ORDERS',
+                    value: '${orders.orders.length}',
+                  ),
                   const SizedBox(width: 10),
                   _buildStatCard(
+                    //phase 6
                     label: 'MENU ITEMS',
-                    value: '$_totalMenuItems',
+                    value: '-',
                   ),
                   const SizedBox(width: 10),
                   _buildStatCard(
@@ -175,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildActionButton(
                 label: 'Log out',
                 filled: false,
-                onPressed: () => _showLogoutDialog(),
+                onPressed: () => _showLogoutDialog(context, auth),
               ),
 
               const SizedBox(height: 20),
@@ -304,7 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ── Logout confirmation dialog ──
-  void _showLogoutDialog() {
+  void _showLogoutDialog(BuildContext context, AuthProvider auth) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -333,8 +349,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              BiteBoxRoutes.logout(context);
+            onPressed: () async {
+              Navigator.pop(ctx); // close dialog first
+              await auth.logout(); // clears Hive JWT + session
+              if (context.mounted) {
+                BiteBoxRoutes.logout(context); // navigate to login
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: BBColors.red,

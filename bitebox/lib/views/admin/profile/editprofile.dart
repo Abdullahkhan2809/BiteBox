@@ -1,8 +1,11 @@
 import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/services/storage_service.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class Editprofile extends StatefulWidget {
   const Editprofile({super.key});
@@ -34,14 +37,53 @@ class _EditprofileState extends State<Editprofile> {
     super.dispose();
   }
 
-    Future<void> _saveChanges() async {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      if (auth.student != null) {
+        setState(() {
+          _nameController.text = auth.student?.name ?? '';
+          _emailController.text = auth.student?.email ?? '';
+          _phoneController.text = auth.student?.phone ?? '';
+          _restaurantnameController.text = auth.student?.restaurantName ?? '';
+          _locationController.text = auth.student?.location ?? '';
+          _biodescriptionController.text = auth.student?.bio ?? '';
+        });
+      }
+    });
+  }
+
+   Future<void> _saveChanges() async {
     if (_keyform.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // TODO: Replace with your actual save logic (Hive / backend)
-      await Future.delayed(const Duration(seconds: 1));
+      try {
+        final auth = context.read<AuthProvider>();
+        final storage = StorageService();
 
-      if (mounted) {
+        // 1. UPDATE THE BACKEND FIRST
+        // You must send these changes to your Node.js/Postgres API so it saves globally.
+        // Example: await ApiService().updateAdminProfile(name: _nameController.text, ...);
+
+        // 2. IF BACKEND SUCCEEDS, UPDATE LOCAL HIVE CACHE
+        await storage.updateUser(
+          name: _nameController.text,
+          phone: _phoneController.text,
+          email: _emailController.text,
+          location: _locationController.text,
+          restaurantName: _restaurantnameController.text,
+          bio: _biodescriptionController.text,
+        );
+
+        // 3. REFRESH STATE
+        await auth.loadUser();
+
+        // 4. CHECK IF WIDGET IS STILL ALIVE
+        if (!mounted) return;
+
+        // 5. SHOW SUCCESS AND CLOSE SCREEN
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profile updated successfully!'),
@@ -49,11 +91,24 @@ class _EditprofileState extends State<Editprofile> {
           ),
         );
         Navigator.pop(context);
+
+      } catch (e) {
+        // Handle API errors gracefully
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating profile: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        // Only stop the loading spinner if the user hasn't popped the screen
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
-      setState(() => _isLoading = false);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

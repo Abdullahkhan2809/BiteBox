@@ -10,12 +10,14 @@ class Menuitemcarduser extends StatelessWidget {
   final String? imageUrl;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onTap;
 
   const Menuitemcarduser({
     super.key,
     required this.title,
     required this.category,
     this.itemDescription,
+    this.onTap,
     this.price,
     this.imageUrl,
     this.onEdit,
@@ -149,7 +151,7 @@ class Menuitemcarduser extends StatelessWidget {
                     radius: 16,
                     backgroundColor: Colors.white,
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: onTap,
                       padding: EdgeInsets.zero,
                       icon: Icon(Icons.add, color: BBColors.darkRed, size: 28),
                     ),

@@ -8,6 +8,7 @@ class Specialmenucard extends StatefulWidget {
   final String itemName;
   final double rate;
   final int timetext;
+  final VoidCallback? onTap;
 
   const Specialmenucard({
     super.key,
@@ -15,6 +16,8 @@ class Specialmenucard extends StatefulWidget {
     required this.itemName,
     required this.rate,
     required this.timetext,
+    this.onTap,
+
   });
 
   @override
@@ -130,7 +133,7 @@ class _SpecialmenucardState extends State<Specialmenucard> {
               width: double.infinity,
               height: 32,
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: widget.onTap,
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.zero,
                   side: const BorderSide(color: BBColors.redMuted),

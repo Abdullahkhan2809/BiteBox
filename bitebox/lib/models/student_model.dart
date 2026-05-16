@@ -21,6 +21,14 @@ class StudentModel {
         paymentMethod: json['payment_method'] as String? ?? 'cash',
   );
 
+  get restaurantName => null;
+
+  get email => null;
+
+  get location => null;
+
+  get bio => null;
+
   Map<String,dynamic> toJson()=>{
     'cms_id':cmsid,
     'name':name,

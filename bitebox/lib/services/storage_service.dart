@@ -5,8 +5,8 @@ import 'package:hive/hive.dart';
 class StorageService {
   //get hive reference
   Box get _userData => Hive.box('userdata');
-  Box<MenuItem> get _menuData => Hive.box<MenuItem>('menu_items');
-  Box<Restaurant> get _restaurantData => Hive.box<Restaurant>('restaurants');
+  Box<MenuItem> get _menuData => Hive.box<MenuItem>('menu_items_box');
+  Box<Restaurant> get _restaurantData => Hive.box<Restaurant>('restaurants_box');
 
   // authentication for the students Side
   //called right  after login api returns a token
@@ -16,7 +16,7 @@ class StorageService {
 
   //called by every service file when before making any api request
   String? getTokens() {
-    return _userData.get('Jwt') as String?;
+    return _userData.get('jwt') as String?;
   }
 
   //called after student enters name+phoneNumber+cmsid in add UserDetails
@@ -98,5 +98,7 @@ class StorageService {
   bool hasMenuItems(String restaurantId) {
     return _menuData.values.any((item) => item.restaurantId == restaurantId);
   }
+
+  Future<void> updateUser({required String name, required String phone, required String email, required String location, required String restaurantName, required String bio}) async {}
   
 }

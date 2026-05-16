@@ -6,6 +6,7 @@ import 'package:bitebox/providers/auth_provider.dart';
 import 'package:bitebox/providers/cart_provider.dart';
 import 'package:bitebox/providers/order_provider.dart';
 import 'package:bitebox/providers/restaurant_provider.dart';
+import 'package:bitebox/views/admin/add_menu_items.dart';
 import 'package:bitebox/views/auth/view/login_admin.dart';
 import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/user/popup.dart';
@@ -85,7 +86,7 @@ class MyApp extends StatelessWidget {
           splashTransition: SplashTransition.scaleTransition,
           pageTransitionType: PageTransitionType.bottomToTop,
           nextScreen:
-              const LoginAdmin(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
+              const AddmenuItems(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
           backgroundColor: BBColors.darkRed,
         ),
         ...BiteBoxRoutes.getRoutes(), // ← all named routes registered
