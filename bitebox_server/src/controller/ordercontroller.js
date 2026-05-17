@@ -1,29 +1,33 @@
 const db = require('../config/db');
 
-// POST /api/orders  (student)
+// POST /orders  (student)
 exports.placeOrder = async (req, res) => {
-  const { student_id, restaurant_id, items, total_amount, payment_method, note } = req.body;
+  // student_id comes from the verified JWT, not the request body
+  const student_id = req.user.cms_id;
+  const { restaurant_id, items, total_amount, payment_method, note } = req.body;
 
-  if (!student_id || !restaurant_id || !items?.length || !total_amount || !payment_method) {
+  if (!restaurant_id || !items?.length || !total_amount || !payment_method) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
-
-  
-
+  const client = await db.getClient();
   try {
-    // if paying by tab, check limit
+    await client.query('BEGIN');
+
+    // if paying by tab, check limit before writing anything
     if (payment_method === 'tab') {
-      const studentResult = await db.query(
+      const studentResult = await client.query(
         'SELECT pending_balance, max_limit FROM students WHERE cms_id = $1',
         [student_id]
       );
       const student = studentResult.rows[0];
       if (!student) {
+        await client.query('ROLLBACK');
         return res.status(404).json({ message: 'Student not found' });
       }
       const newBalance = parseFloat(student.pending_balance) + parseFloat(total_amount);
       if (newBalance > parseFloat(student.max_limit)) {
+        await client.query('ROLLBACK');
         return res.status(400).json({
           message: `Tab limit exceeded. Limit: ${student.max_limit}, Current: ${student.pending_balance}`,
         });
@@ -31,7 +35,7 @@ exports.placeOrder = async (req, res) => {
     }
 
     // insert order
-    const orderResult = await db.query(
+    const orderResult = await client.query(
       `INSERT INTO orders
          (student_id, restaurant_id, total_amount, payment_method, status, note)
        VALUES ($1, $2, $3, $4, 'pending', $5)
@@ -40,30 +44,31 @@ exports.placeOrder = async (req, res) => {
     );
     const order = orderResult.rows[0];
 
-    // insert order items
+    // insert all order items
     for (const item of items) {
-      await db.query(
+      await client.query(
         `INSERT INTO order_items (order_id, menu_item_id, quantity, price_at_purchase)
          VALUES ($1, $2, $3, $4)`,
         [order.id, item.menu_item_id, item.quantity, item.price_at_purchase]
       );
     }
 
-    // if tab payment, increment pending_balance
+    // update student balance / last_order_at
     if (payment_method === 'tab') {
-      await db.query(
+      await client.query(
         `UPDATE students
          SET pending_balance = pending_balance + $1, last_order_at = NOW()
          WHERE cms_id = $2`,
         [total_amount, student_id]
       );
     } else {
-      // cash — just update last_order_at
-      await db.query(
+      await client.query(
         'UPDATE students SET last_order_at = NOW() WHERE cms_id = $1',
         [student_id]
       );
     }
+
+    await client.query('COMMIT');
 
     // fetch full order with items for response
     const itemsResult = await db.query(
@@ -73,17 +78,17 @@ exports.placeOrder = async (req, res) => {
       [order.id]
     );
 
-    return res.status(201).json({
-      ...order,
-      items: itemsResult.rows,
-    });
+    return res.status(201).json({ ...order, items: itemsResult.rows });
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('placeOrder error:', err.message);
     return res.status(500).json({ message: 'Server error' });
+  } finally {
+    client.release();
   }
 };
 
-// GET /api/orders?restaurant_id=x&status=y  (staff)
+// GET /orders?restaurant_id=x&status=y  (staff)
 exports.getOrders = async (req, res) => {
   const { restaurant_id, status } = req.query;
 
@@ -94,16 +99,16 @@ exports.getOrders = async (req, res) => {
   try {
     let query = `
       SELECT o.*,
-             json_agg(json_build_object(
+             COALESCE(json_agg(json_build_object(
                'id',                oi.id,
                'menu_item_id',      oi.menu_item_id,
                'name',              mi.name,
                'quantity',          oi.quantity,
                'price_at_purchase', oi.price_at_purchase
-             )) AS items
+             )) FILTER (WHERE oi.id IS NOT NULL), '[]') AS items
       FROM orders o
-      JOIN order_items oi ON oi.order_id = o.id
-      JOIN menu_items mi  ON mi.id = oi.menu_item_id
+      LEFT JOIN order_items oi ON oi.order_id = o.id
+      LEFT JOIN menu_items  mi ON mi.id = oi.menu_item_id
       WHERE o.restaurant_id = $1
     `;
     const params = [restaurant_id];
@@ -123,7 +128,7 @@ exports.getOrders = async (req, res) => {
   }
 };
 
-// PATCH /api/orders/:id/status  (staff)
+// PATCH /orders/:id/status  (staff)
 exports.updateOrderStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;

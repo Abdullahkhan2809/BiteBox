@@ -148,6 +148,12 @@ exports.verifyOtp = async (req, res) => {
       return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
+    // invalidate OTP immediately so it can't be reused
+    await db.query(
+      `UPDATE users SET reset_otp = NULL, reset_otp_expiry = NULL WHERE email = $1`,
+      [email]
+    );
+
     // generate a short-lived reset token
     const resetToken = jwt.sign(
       { email, purpose: 'reset' },

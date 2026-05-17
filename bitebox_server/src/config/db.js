@@ -6,7 +6,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-// A robust, self-executing test function
 pool
   .query("SELECT NOW()")
   .then((res) => console.log("db connected : ", res.rows[0].now))
@@ -14,4 +13,5 @@ pool
 
 module.exports = {
   query: (text, params) => pool.query(text, params),
+  getClient: () => pool.connect(),
 };

@@ -7,7 +7,7 @@ const { required } = require('../middleware/validate');
 
 router.post('/',
   auth,
-  required(['student_id', 'restaurant_id', 'items', 'total_amount', 'payment_method']),
+  required(['restaurant_id', 'items', 'total_amount', 'payment_method']),
   controller.placeOrder,
 );
 

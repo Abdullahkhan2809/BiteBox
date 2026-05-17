@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 class MenuService {
   static const String _baseUrl = AppConstants.baseUrl;
+  static const Duration _timeout = AppConstants.requestTimeout;
+
   final StorageService _storage = StorageService();
 
   Map<String, String> get _authHeaders => {
@@ -13,35 +15,24 @@ class MenuService {
         'Authorization': 'Bearer ${_storage.getTokens() ?? ''}',
       };
 
-  // ════════════════════════════════════════════════════════════════════════
-  // GET MENU ITEMS
-  // offline-first: show cache instantly, refresh from network in background
-  // ════════════════════════════════════════════════════════════════════════
-
   Future<List<MenuItem>> getMenuItems(String restaurantId) async {
-    // 1. return cache immediately if available
     final cached = _storage.getMenuItems(restaurantId);
     if (cached.isNotEmpty) return cached;
-
-    // 2. nothing cached — fetch from network
     return await refreshMenuItems(restaurantId);
   }
 
-  // force network fetch — call this on pull-to-refresh
   Future<List<MenuItem>> refreshMenuItems(String restaurantId) async {
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl/menu/$restaurantId'),
         headers: _authHeaders,
-      );
+      ).timeout(_timeout);
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final list = jsonList
             .map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
             .toList();
-
-        // save to Hive cache
         await _storage.saveMenuItems(restaurantId, list);
         return list;
       }
@@ -50,11 +41,6 @@ class MenuService {
       return _storage.getMenuItems(restaurantId);
     }
   }
-
-  // ════════════════════════════════════════════════════════════════════════
-  // ADD MENU ITEM
-  // POST /menu  (manager only)
-  // ════════════════════════════════════════════════════════════════════════
 
   Future<Map<String, dynamic>> addMenuItem({
     required String restaurantId,
@@ -76,12 +62,10 @@ class MenuService {
           'category':      tag,
           'image_url':     imageUrl,
         }),
-      );
+      ).timeout(_timeout);
 
       final data = jsonDecode(response.body);
-
       if (response.statusCode == 201) {
-        // clear cache so menu reloads fresh with new item
         await _storage.clearMenuItems(restaurantId);
         return {'success': true};
       }
@@ -90,9 +74,6 @@ class MenuService {
       return {'success': false, 'message': 'No internet connection'};
     }
   }
-
-  // EDIT MENU ITEM
-  // PATCH /menu/:id  (manager only)
 
   Future<Map<String, dynamic>> updateMenuItem({
     required String itemId,
@@ -103,7 +84,6 @@ class MenuService {
     bool? isAvailable,
   }) async {
     try {
-      // only send fields that were actually changed
       final Map<String, dynamic> body = {};
       if (name != null)        body['name'] = name;
       if (description != null) body['description'] = description;
@@ -114,10 +94,9 @@ class MenuService {
         Uri.parse('$_baseUrl/menu/$itemId'),
         headers: _authHeaders,
         body: jsonEncode(body),
-      );
+      ).timeout(_timeout);
 
       final data = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
         await _storage.clearMenuItems(restaurantId);
         return {'success': true};
@@ -128,10 +107,6 @@ class MenuService {
     }
   }
 
-  // DELETE MENU ITEM
-  // DELETE /menu/:id  (manager only)
-  
-
   Future<Map<String, dynamic>> deleteMenuItem({
     required String itemId,
     required String restaurantId,
@@ -140,16 +115,16 @@ class MenuService {
       final response = await http.delete(
         Uri.parse('$_baseUrl/menu/$itemId'),
         headers: _authHeaders,
-      );
+      ).timeout(_timeout);
 
-      if (response.statusCode == 200 || response.statusCode==201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         await _storage.clearMenuItems(restaurantId);
         return {'success': true};
       }
       final data = jsonDecode(response.body);
       return {'success': false, 'message': data['message'] ?? 'Failed to delete'};
     } catch (e) {
-      return {'success': false, 'message':e.toString()};
+      return {'success': false, 'message': e.toString()};
     }
   }
 

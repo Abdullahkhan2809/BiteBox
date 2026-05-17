@@ -7,9 +7,8 @@ import 'package:hive/hive.dart';
 class StorageService {
   //get hive reference
   Box get _userData => Hive.box('userdata');
-  Box<MenuItem> get _menuData => Hive.box<MenuItem>('menu_items_box');
-  Box<Restaurant> get _restaurantData =>
-      Hive.box<Restaurant>('restaurants_box');
+  Box<MenuItem> get _menuData => Hive.box<MenuItem>('menu_items');
+  Box<Restaurant> get _restaurantData => Hive.box<Restaurant>('restaurants');
 
   // authentication for the students Side
   //called right  after login api returns a token
@@ -60,6 +59,17 @@ class StorageService {
   String? getStudentPhone() => _userData.get('phone') as String?;
   String? getStudentPaymentMethod() =>
       _userData.get('payment_method') as String?;
+
+  Future<void> saveStaffSession({
+    required String role,
+    required String? restaurantId,
+  }) async {
+    await _userData.put('role', role);
+    if (restaurantId != null) await _userData.put('restaurant_id', restaurantId);
+  }
+
+  String? getRole() => _userData.get('role') as String?;
+  String? getRestaurantId() => _userData.get('restaurant_id') as String?;
 
   // called on logout — wipes token and student session
   Future<void> clearAll() async {

@@ -30,23 +30,32 @@ class AuthProvider extends ChangeNotifier {
   // calls main.dart
   void loadSession() {
     _token = _storage.getTokens();
-    final cmsId = _storage.getStudentCMSID();
-    final name = _storage.getStudentName();
-    final phone = _storage.getStudentPhone();
-    final category = _storage.getStudentCMSID() != null
-        ? 'student'
-        : null; // Logic based on stored data
-    final paymentMethod = _storage.getStudentPaymentMethod();
+    if (_token == null) {
+      notifyListeners();
+      return;
+    }
 
-    if (cmsId != null && name != null && phone != null) {
-      _student = StudentModel(
-        cmsid: cmsId,
-        name: name,
-        phone: phone,
-        category: category ?? '',
-        paymentMethod: paymentMethod ?? 'cash',
-      );
-      _role = 'student';
+    final savedRole = _storage.getRole();
+
+    if (savedRole == 'staff' || savedRole == 'cafe_manager') {
+      _role         = savedRole;
+      _restaurantid = _storage.getRestaurantId();
+    } else {
+      final cmsId        = _storage.getStudentCMSID();
+      final name         = _storage.getStudentName();
+      final phone        = _storage.getStudentPhone();
+      final paymentMethod = _storage.getStudentPaymentMethod();
+
+      if (cmsId != null && name != null && phone != null) {
+        _student = StudentModel(
+          cmsid: cmsId,
+          name: name,
+          phone: phone,
+          category: 'student',
+          paymentMethod: paymentMethod ?? 'cash',
+        );
+        _role = 'student';
+      }
     }
     notifyListeners();
   }
