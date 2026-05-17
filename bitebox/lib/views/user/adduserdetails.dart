@@ -44,20 +44,21 @@ class _AdduserdetailsState extends State<Adduserdetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(74),
         child: AppbarWidget(title: 'DETAILS'),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            //set the indicator
-            const Indicator(current_step: 2),
-            const SizedBox(height: 24),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              //set the indicator
+              const Indicator(current_step: 2),
+              const SizedBox(height: 24),
+              Column(
                 children: [
                   //header
                   Container(

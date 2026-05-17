@@ -25,24 +25,26 @@ class _FeedbackState extends State<Feedback> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(74),
         child: AppbarWidget(title: 'Feedback'),
       ),
         
-      body: Container(
-        height: 550,
-        margin: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: BBColors.surface2,
-        ),
-        child: Padding(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          margin: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: BBColors.surface2,
+          ),
+          child: Padding(
 
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Text('Feedback Form', style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -79,6 +81,7 @@ class _FeedbackState extends State<Feedback> {
             )
             ],
           ),
+        ),
         ),
       ),
     );

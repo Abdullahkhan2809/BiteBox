@@ -15,7 +15,6 @@ class Indicator extends StatelessWidget {
       _stepbuild(2),
       _buildline(2),
       _stepbuild(3),
-      _buildline(3)
       ],
     );
   }

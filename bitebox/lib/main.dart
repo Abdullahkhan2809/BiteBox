@@ -7,6 +7,7 @@ import 'package:bitebox/providers/cart_provider.dart';
 import 'package:bitebox/providers/order_provider.dart';
 import 'package:bitebox/providers/restaurant_provider.dart';
 import 'package:bitebox/views/admin/add_menu_items.dart';
+import 'package:bitebox/views/admin/admin_live_order.dart';
 import 'package:bitebox/views/auth/view/login_admin.dart';
 import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/user/popup.dart';
@@ -97,7 +98,7 @@ class MyApp extends StatelessWidget {
     switch (route) {
       case BiteBoxRoutes.home:
         return const  UserHome();
-      case BiteBoxRoutes.adminDashboard:
+      case BiteBoxRoutes.adminRoot:
         return const DashboardScreen();
       case BiteBoxRoutes.adminLiveOrders:
         return const AdminLiveOrder();
