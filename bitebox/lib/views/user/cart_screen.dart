@@ -28,7 +28,7 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Cart Empty. Add items.',
+            'Cart Empty. Add item.',
             style: GoogleFonts.poppins(fontSize: 16),
           ),
           backgroundColor: BBColors.redMuted,
@@ -73,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
                       Align(
                         widthFactor: 1.4,
                         child: Text(
-                          'ITEMS',
+                          'item',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class _CartScreenState extends State<CartScreen> {
                     ],
                   ),
                 ),
-                //add dynamic list of items added to the cart
+                //add dynamic list of item added to the cart
                 const SizedBox(height: 16),
                  if (cart.isEmpty)
                   Padding(
@@ -107,16 +107,16 @@ class _CartScreenState extends State<CartScreen> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: CartItem(
-                        title: entry.items.name,
-                        category: entry.items.tag,
+                        title: entry.item.name,
+                        category: entry.item.tag,
                         quantity: entry.quantity,
-                        itemDescription: entry.items.description,
-                        price: entry.items.price.toStringAsFixed(0),
+                        itemDescription: entry.item.description,
+                        price: entry.item.price.toStringAsFixed(0),
                         onIncrement: () =>
-                            cart.increment(entry.items.id),
+                            cart.increment(entry.item.id),
                         onDecrement: () =>
-                            cart.decrement(entry.items.id),
-                        onDelete: () => cart.removeItem(entry.items.id),
+                            cart.decrement(entry.item.id),
+                        onDelete: () => cart.removeItem(entry.item.id),
                       ),
                     );
                   }).toList(),

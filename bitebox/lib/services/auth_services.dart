@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:bitebox/core/constant.dart';
 import 'package:bitebox/services/storage_service.dart';
 import 'package:http/http.dart' as http;
 
 class AuthServices {
   //base url
-  static const String _baseUrl = 'http://192.168.1.1:3000';
+  static const String _baseUrl = AppConstants.baseUrl;
 
   //call the storage services
   final StorageService _service = StorageService();
@@ -21,14 +22,10 @@ class AuthServices {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/Student/auth'),
+        Uri.parse('$_baseUrl/auth/student'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'cms_id': cmsId,
-          'name': name,
-          'phone': phone,
-          'category': category,
-          'payment_method': paymentMethod,
         }),
       );
 
@@ -86,6 +83,7 @@ class AuthServices {
 
   //logout
   Future<void> logout() async {
+    
     await _service.clearAll();
   }
 
@@ -94,7 +92,7 @@ class AuthServices {
   Future<Map<String, dynamic>> forgotpassword({required String email}) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/auth/forgotpassword'),
+        Uri.parse('$_baseUrl/auth/forgot-password'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email}),
       );
@@ -125,7 +123,7 @@ class AuthServices {
       final response = await http.post(
         Uri.parse('$_baseUrl/auth/verify-otp'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'OTP': otp}),
+        body: jsonEncode({'email': email, 'otp': otp}),
       );
 
       final data = jsonDecode(response.body) as Map<String, dynamic>;

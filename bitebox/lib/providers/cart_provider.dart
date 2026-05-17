@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:bitebox/models/menu_item_model.dart';
 
 class CartEntry {
-  final MenuItem items;
+  final MenuItem item;
   int quantity;
 
-  CartEntry({required this.items, required this.quantity});
+  CartEntry({required this.item, required this.quantity});
 
-  double get subtotal => items.price * quantity;
+  double get subtotal => item.price * quantity;
 }
 
 class CartProvider extends ChangeNotifier {
@@ -30,17 +30,17 @@ class CartProvider extends ChangeNotifier {
 
     _restaurantid = item.restaurantId;
 
-    final index = _entries.indexWhere((e) => e.items.id == item.id);
+    final index = _entries.indexWhere((e) => e.item.id == item.id);
     if (index != -1) {
       _entries[index].quantity++;
     } else {
-      _entries.add(CartEntry(items: item, quantity: 1));
+      _entries.add(CartEntry(item: item, quantity: 1));
     }
     notifyListeners();
   }
 
   void increment(String itemId) {
-    final index = _entries.indexWhere((e) => e.items.id == itemId);
+    final index = _entries.indexWhere((e) => e.item.id == itemId);
     if (index != -1) {
       _entries[index].quantity++;
       notifyListeners();
@@ -48,14 +48,14 @@ class CartProvider extends ChangeNotifier {
   }
 
   void decrement(String itemId) {
-    final index = _entries.indexWhere((e) => e.items.id == itemId);
+    final index = _entries.indexWhere((e) => e.item.id == itemId);
     if (index != -1) {
       removeItem(itemId);
     }
   }
 
   void removeItem(String itemId) {
-    final index = _entries.indexWhere((e) => e.items.id == itemId);
+    final index = _entries.indexWhere((e) => e.item.id == itemId);
     if (index != -1) {
       if (_entries[index].quantity > 1) {
         _entries[index].quantity--;
@@ -76,15 +76,15 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // covert entries items to order item for the api call
-  List<Map<String, dynamic>> toOrderItems() {
+  // covert entries item to order item for the api call
+  List<Map<String, dynamic>> toOrderitem() {
     return _entries
         .map(
           (e) => {
-            'menu_item': e.items.id,
-            'name': e.items.name,
+            'menu_item': e.item.id,
+            'name': e.item.name,
             'quantity': e.quantity,
-            'priceAtpurchase': e.items.price,
+            'priceAtpurchase': e.item.price,
           },
         )
         .toList();

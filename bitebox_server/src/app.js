@@ -1,35 +1,30 @@
 const express = require('express');
-const cors= require('cors');
+const cors    = require('cors');
 require('dotenv').config();
 
-//import database connection
-const db=require ('./config/db');
+// db connection (just importing triggers the connection test)
+require('./config/db');
 
-//import menu routes
-const menuRoutes= require('./routes/menuRoutes');
+// routes
+const authRoutes       = require('./routes/auth_adminRoute');
+const menuRoutes       = require('./routes/menuRoutes');
+const orderRoutes      = require('./routes/orderRoutes');
+const restaurantRoutes = require('./routes/restaurantRoutes');
 
-const app=express();
+const app = express();
 
-//create the middle ware
-app.use(cors()); //allows flutter app to talk
-app.use(express.json()); //allows server to prase the json file
+app.use(cors());
+app.use(express.json());
 
-//routes for the menu
-console.log('Checking menuRoutes:', menuRoutes);
-app.use('/api/menu', menuRoutes);
+// mount routes
+app.use('/auth',         authRoutes);
+app.use('/menu',         menuRoutes);
+app.use('/orders',       orderRoutes);
+app.use('/restaurants',  restaurantRoutes);
 
-// api get request
-app.get('/',(req,res)=>{
-    res.send('api running');
-})
+app.get('/', (req, res) => res.send('BiteBox API running'));
 
-const PORT= process.env.PORT || 3000;
-
-app.listen(PORT, ()=>{
-    console.log(`\n Server is sprinting on http://localhost:${PORT}`);
-    console.log(`📂 Menu API: http://localhost:${PORT}/api/menu\n`);
-})
-
-
-
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+});

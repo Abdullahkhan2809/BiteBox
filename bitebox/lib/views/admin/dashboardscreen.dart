@@ -166,7 +166,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       };
 
                       // format items as "2x Burger, 1x Fries"
-                      final itemsText = order.items
+                      final itemsText = order.item
                           .map((i) => '${i.quantity}x ${i.name}')
                           .join(', ');
 

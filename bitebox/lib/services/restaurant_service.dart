@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:bitebox/core/constant.dart';
 import 'package:bitebox/models/retaurant_model.dart';
 import 'package:bitebox/services/storage_service.dart';
 import 'package:http/http.dart' as http;
 
 class RestaurantService {
-  static const String _baseUrl = 'http://192.168.1.1:3000';
+  static const String _baseUrl = AppConstants.baseUrl;
 
   final StorageService _service = StorageService();
 
@@ -30,7 +31,7 @@ class RestaurantService {
   Future<List<Restaurant>> refreshrestaurant() async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/Restaurant'),
+        Uri.parse('$_baseUrl/restaurants'),
         headers: _authHeader,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -58,9 +59,9 @@ class RestaurantService {
   }) async{
     try{
       final response= await http.patch(
-        Uri.parse('$_baseUrl/restaurant/$restaurantId'),
+        Uri.parse('$_baseUrl/restaurants/$restaurantId'),
         headers: _authHeader,
-        body:jsonEncode({'isopen': isopen}),
+        body:jsonEncode({'is_open': isopen}),
       );
 
       final data=jsonDecode(response.body);

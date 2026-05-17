@@ -242,7 +242,7 @@ class _AdminLiveOrderState extends State<AdminLiveOrder> {
                         final order = orderProvider.orders[index];
 
                         // format items string
-                        final itemsText = order.items
+                        final itemsText = order.item
                             .map((i) => '${i.quantity}x ${i.name}')
                             .join(', ');
 

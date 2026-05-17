@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/models/retaurant_model.dart';
 import 'package:hive/hive.dart';
@@ -6,7 +8,8 @@ class StorageService {
   //get hive reference
   Box get _userData => Hive.box('userdata');
   Box<MenuItem> get _menuData => Hive.box<MenuItem>('menu_items_box');
-  Box<Restaurant> get _restaurantData => Hive.box<Restaurant>('restaurants_box');
+  Box<Restaurant> get _restaurantData =>
+      Hive.box<Restaurant>('restaurants_box');
 
   // authentication for the students Side
   //called right  after login api returns a token
@@ -17,6 +20,24 @@ class StorageService {
   //called by every service file when before making any api request
   String? getTokens() {
     return _userData.get('jwt') as String?;
+  }
+
+  // check if stored JWT is expired before using it
+  bool get isTokenExpired {
+    final token = getTokens();
+    if (token == null) return true;
+
+    try {
+      // JWT is 3 base64 parts: header.payload.signature
+      final parts = token.split('.');
+      final payload = json.decode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+      );
+      final exp = payload['exp'] as int;
+      return DateTime.now().millisecondsSinceEpoch / 1000 > exp;
+    } catch (_) {
+      return true; // if decode fails, treat as expired
+    }
   }
 
   //called after student enters name+phoneNumber+cmsid in add UserDetails
@@ -99,6 +120,19 @@ class StorageService {
     return _menuData.values.any((item) => item.restaurantId == restaurantId);
   }
 
-  Future<void> updateUser({required String name, required String phone, required String email, required String location, required String restaurantName, required String bio}) async {}
-  
+  Future<void> updateUser({
+    required String name,
+    required String phone,
+    required String email,
+    required String location,
+    required String restaurantName,
+    required String bio,
+  }) async {
+    await _userData.put('name', name);
+    await _userData.put('phone', phone);
+    await _userData.put('email', email);
+    await _userData.put('location', location);
+    await _userData.put('restaurant_name', restaurantName);
+    await _userData.put('bio', bio);
+  }
 }

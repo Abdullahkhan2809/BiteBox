@@ -34,17 +34,17 @@ class OrderProvider extends ChangeNotifier {
 
     // convert cart entries to OrderItems
     final items = cartProvider.entries.map((e) => Order_items(
-      menuItem:      e.items.id,
-      name:            e.items.name,
+      menuItem:      e.item.id,
+      name:            e.item.name,
       quantity:        e.quantity,
-      priceAtpurchase: e.items.price,
+      priceAtpurchase: e.item.price,
     )).toList();
 
     final result = await _service.placeOrder(
       studentId:     studentId,
       studentName:   studentName,
       restaurantId:  restaurantId,
-      items:         items,
+      item:         items,
       totalAmount:   cartProvider.total,
       paymentMethod: paymentMethod,
       note:          note,
@@ -113,7 +113,7 @@ class OrderProvider extends ChangeNotifier {
           id:            _orders[index].id,
           studentId:     _orders[index].studentId,
           restaurantId:  _orders[index].restaurantId,
-          items:         _orders[index].items,
+          item:         _orders[index].item,
           totalAmount:   _orders[index].totalAmount,
           paymentMethod: _orders[index].paymentMethod,
           status:        next,

@@ -28,10 +28,8 @@ class OrderConfirmationPopup extends StatelessWidget {
     return Consumer<OrderProvider>(
       builder: (context, orderProvider, _) {
         final order = orderProvider.placedOrder;
-
-        final displayName = customerName ?? order?.studentName ?? 'N/A';
         final displayCmsId = cmsId ?? order?.studentId ?? 'N/A';
-        final displayItems = items ?? (order?.items?.map((item) => {
+        final displayItems = items ?? (order?.item?.map((item) => {
           'name': item.name,
           'quantity': item.quantity ?? 1,
           'price': item.priceAtpurchase.toStringAsFixed(0),
@@ -74,7 +72,6 @@ class OrderConfirmationPopup extends StatelessWidget {
                   _InfoCard(
                     children: [
                       _InfoRow(label: 'Order ID', value: displayOrderId, mono: true),
-                      _InfoRow(label: 'Customer', value: displayName),
                       _InfoRow(label: 'CMS ID', value: displayCmsId, mono: true),
                     ],
                   ),

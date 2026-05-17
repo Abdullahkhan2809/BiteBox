@@ -78,7 +78,7 @@ class _EditprofileState extends State<Editprofile> {
         );
 
         // 3. REFRESH STATE
-        await auth.loadUser();
+        auth.loadSession();
 
         // 4. CHECK IF WIDGET IS STILL ALIVE
         if (!mounted) return;

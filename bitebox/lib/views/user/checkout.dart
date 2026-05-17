@@ -251,7 +251,7 @@ class _CheckoutState extends State<Checkout> {
                                   return Row(
                                     children: [
                                       Text(
-                                        entry.items.name,
+                                        entry.item.name,
                                         style: TextStyle(
                                           color: BBColors.muted,
                                           fontSize: 15,

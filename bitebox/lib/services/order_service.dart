@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:bitebox/core/constant.dart';
 import 'package:bitebox/models/order_model.dart';
 import 'package:bitebox/services/storage_service.dart';
 import 'package:http/http.dart' as http;
 
 class OrderService {
-  static const String _baseUrl = 'http://10.0.2.2:3000';
+  static const String _baseUrl = AppConstants.baseUrl;
   final StorageService _storage = StorageService();
 
   Map<String, String> get _authHeaders => {
@@ -18,7 +19,7 @@ class OrderService {
   Future<Map<String, dynamic>> placeOrder({
     required String studentId,
     required String restaurantId,
-    required List<Order_items> items,
+    required List<Order_items> item,
     required double totalAmount,
     required String paymentMethod, // 'cash' | 'onlinepayment'
     String? note, required String studentName,
@@ -27,7 +28,7 @@ class OrderService {
       final order = Order(
         studentId:     studentId,
         restaurantId:  restaurantId,
-        items:         items,
+        item:         item,
         totalAmount:   totalAmount,
         paymentMethod: paymentMethod,
         note:          note,
@@ -54,10 +55,10 @@ class OrderService {
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════════
+  
   // GET ORDERS
   // GET /orders?restaurant_id=x&status=y  (staff)
-  // ════════════════════════════════════════════════════════════════════════
+
 
   Future<List<Order>> getOrders({
     required String restaurantId,

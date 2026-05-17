@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:bitebox/core/constant.dart';
 import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/services/storage_service.dart';
 import 'package:http/http.dart' as http;
 
 class MenuService {
-  static const String _baseUrl = 'http://10.0.2.2:3000';
+  static const String _baseUrl = AppConstants.baseUrl;
   final StorageService _storage = StorageService();
 
   Map<String, String> get _authHeaders => {
