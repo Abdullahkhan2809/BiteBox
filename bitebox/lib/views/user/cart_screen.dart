@@ -42,24 +42,21 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(74),
         child: AppbarWidget(title: "CART"),
       ),
 
-      //body for the cart
       body: Consumer<CartProvider>(
         builder: (context, cart, child) {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
-          
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 const Indicator(current_step: 1),
-                const SizedBox(
-                  height: 24,
-                ),
+                const SizedBox(height: 24),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   width: double.infinity,
@@ -92,9 +89,8 @@ class _CartScreenState extends State<CartScreen> {
                     ],
                   ),
                 ),
-                //add dynamic list of item added to the cart
                 const SizedBox(height: 16),
-                 if (cart.isEmpty)
+                if (cart.isEmpty)
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Text(
@@ -102,7 +98,7 @@ class _CartScreenState extends State<CartScreen> {
                       style: GoogleFonts.poppins(color: BBColors.muted),
                     ),
                   )
-                else 
+                else
                   ...cart.entries.map((entry) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -112,10 +108,8 @@ class _CartScreenState extends State<CartScreen> {
                         quantity: entry.quantity,
                         itemDescription: entry.item.description,
                         price: entry.item.price.toStringAsFixed(0),
-                        onIncrement: () =>
-                            cart.increment(entry.item.id),
-                        onDecrement: () =>
-                            cart.decrement(entry.item.id),
+                        onIncrement: () => cart.increment(entry.item.id),
+                        onDecrement: () => cart.decrement(entry.item.id),
                         onDelete: () => cart.removeItem(entry.item.id),
                       ),
                     );
@@ -126,7 +120,6 @@ class _CartScreenState extends State<CartScreen> {
                 _PromoCodeTextField(
                   controller: _PromoCode,
                   onApply: () {
-                    //done in phase 6
                     print(_PromoCode.text);
                   },
                 ),
@@ -134,91 +127,88 @@ class _CartScreenState extends State<CartScreen> {
                 Container(
                   padding: EdgeInsets.all(16),
                   width: double.infinity,
-                  height: 180,
                   decoration: BoxDecoration(
                     color: BBColors.surface2,
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Align(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Order Summary',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Order Summary',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            'Subtotal',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: BBColors.hintText,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Text(
-                              'Subtotal',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: BBColors.hintText,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          Spacer(),
+                          Text(
+                            'Rs. ${cart.total.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                            Spacer(),
-                            Text(
-                              'Rs. ${cart.total.toStringAsFixed(0)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            'Discount',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: BBColors.hintText,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Text(
-                              'Discount',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: BBColors.hintText,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          ),
+                          Spacer(),
+                          Text(
+                            '- Rs. 0',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: BBColors.green,
                             ),
-                            Spacer(),
-                            Text(
-                              '- Rs. 0',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: BBColors.green,
-                              ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            'Total',
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Text(
-                              'Total',
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          ),
+                          Spacer(),
+                          Text(
+                            'Rs. ${cart.total.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 255, 18, 18),
+                              fontSize: 20,
                             ),
-                            Spacer(),
-                            Text(
-                              'Rs. ${cart.total.toStringAsFixed(0)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 255, 18, 18),
-                                fontSize: 20,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),
-          
+
                 ElevatedButton(
                   onPressed: () => _handleDetail(cart),
                   style: ButtonStyle(
@@ -242,7 +232,7 @@ class _CartScreenState extends State<CartScreen> {
               ],
             ),
           );
-        }
+        },
       ),
     );
   }
@@ -264,7 +254,6 @@ Widget _PromoCodeTextField({
       children: [
         Icon(Icons.label),
         const SizedBox(width: 6),
-        // TextField
         Expanded(
           child: TextField(
             controller: controller,
@@ -276,8 +265,6 @@ Widget _PromoCodeTextField({
             ),
           ),
         ),
-
-        // Apply Button
         ElevatedButton(
           onPressed: onApply,
           style: ElevatedButton.styleFrom(
