@@ -85,8 +85,7 @@ class MyApp extends StatelessWidget {
           splashIconSize: 200,
           splashTransition: SplashTransition.scaleTransition,
           pageTransitionType: PageTransitionType.bottomToTop,
-          nextScreen:
-              const AddmenuItems(), // _resolveInitialScreen(BiteBoxRoutes.adminProfile), // ← lands here after splash
+          nextScreen: _resolveInitialScreen(BiteBoxRoutes.adminProfile),
           backgroundColor: BBColors.darkRed,
         ),
         ...BiteBoxRoutes.getRoutes(), // ← all named routes registered
@@ -94,16 +93,16 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  //  Widget _resolveInitialScreen(String route) {
-  //   switch (route) {
-  //     case BiteBoxRoutes.home:
-  //       return const  UserHome();
-  //     case BiteBoxRoutes.adminDashboard:
-  //       return const DashboardScreen();
-  //     case BiteBoxRoutes.adminLiveOrders:
-  //       return const AdminLiveOrder();
-  //     default:
-  //       return const LoginAdmin(); // fallback → login
-  //   }
-  // }
+   Widget _resolveInitialScreen(String route) {
+    switch (route) {
+      case BiteBoxRoutes.home:
+        return const  UserHome();
+      case BiteBoxRoutes.adminDashboard:
+        return const DashboardScreen();
+      case BiteBoxRoutes.adminLiveOrders:
+        return const AdminLiveOrder();
+      default:
+        return const LoginAdmin(); // fallback → login
+    }
+  }
 }
