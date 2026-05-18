@@ -9,13 +9,14 @@ class Indicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
       _stepbuild(1),
       _buildline(1),
       _stepbuild(2),
       _buildline(2),
       _stepbuild(3),
-      _buildline(3)
       ],
     );
   }
@@ -39,7 +40,7 @@ class Indicator extends StatelessWidget {
         child: isDone
             ? const Icon(Icons.check, color: Colors.white, size: 18)
             : Text(
-                '$Step',
+                '$step',
                 style: GoogleFonts.poppins(
                   color: isActive ? Colors.white : BBColors.muted,
                   fontWeight: FontWeight.bold,

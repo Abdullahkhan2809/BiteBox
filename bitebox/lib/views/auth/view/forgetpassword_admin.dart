@@ -23,24 +23,33 @@ class _ForgetpasswordAdminState extends State<ForgetpasswordAdmin> {
 
   Future<void> _sendOtp() async {
     final email = _emailcontroller.text.trim();
+
     if (email.isEmpty) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Phase 6: replace with real API call
-      // final result = await AuthServices().forgotPassword(email: email);
-
-      await Future.delayed(Duration(seconds: 1));
-
-      if (mounted) {
-        //pass email to otp screen
-        Navigator.pushNamed(context, BiteBoxRoutes.otpVerify, arguments: email);
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter your email address')),
+      );
+      return;
     }
-    setState(() {
-      _isLoading = false;
-    });
+
+    final emailRegex = RegExp(r'^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Phase 6: replace with real API call
+    // final result = await AuthServices().forgotPassword(email: email);
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (mounted) {
+      Navigator.pushNamed(context, BiteBoxRoutes.otpVerify, arguments: email);
+    }
+    setState(() => _isLoading = false);
   }
 
   @override

@@ -38,18 +38,16 @@ class _CheckoutState extends State<Checkout> {
             padding: const EdgeInsets.all(16),
             child: Form(
               key: _keyform,
-              child: Column(
-                children: [
-                    const Indicator(current_step: 3),
-                    const SizedBox(height: 24,),
-                    Expanded(
-                      flex: 3,
-                      child: SingleChildScrollView(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                      const Indicator(current_step: 3),
+                      const SizedBox(height: 24,),
+                      Container(
                         child: Column(
                           children: [
                             Container(
-                              height: 115,
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 color: BBColors.surface2,
                                 border: Border.all(color: BBColors.red),
@@ -127,8 +125,7 @@ class _CheckoutState extends State<Checkout> {
                             ),
                             const SizedBox(height: 16),
                             Container(
-                              height: 80,
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 color: BBColors.surface2,
                                 border: Border.all(color: BBColors.red),
@@ -180,12 +177,9 @@ class _CheckoutState extends State<Checkout> {
                           ],
                         ),
                       ),
-                    ),
-
                             const SizedBox(height: 16),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              height: 70,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 color: BBColors.redTint,
                                 border: Border.all(color: BBColors.red),
@@ -221,11 +215,8 @@ class _CheckoutState extends State<Checkout> {
 
                     //order items Container and convert the singlescroll to list view in statemanagement
                     const SizedBox(height: 16),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
+                      Container(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        height: 120,
                         decoration: BoxDecoration(
                           color: BBColors.surface2,
                           border: Border.all(color: BBColors.red),
@@ -241,48 +232,47 @@ class _CheckoutState extends State<Checkout> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Expanded(
-                              child: ListView.separated(
-                                itemCount: cartProvider.entries.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 8),
-                                itemBuilder: (context, index) {
-                                  final entry = cartProvider.entries[index];
-                                  return Row(
-                                    children: [
-                                      Text(
-                                        entry.item.name,
-                                        style: TextStyle(
-                                          color: BBColors.muted,
-                                          fontSize: 15,
-                                        ),
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: cartProvider.entries.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 8),
+                              itemBuilder: (context, index) {
+                                final entry = cartProvider.entries[index];
+                                return Row(
+                                  children: [
+                                    Text(
+                                      entry.item.name,
+                                      style: TextStyle(
+                                        color: BBColors.muted,
+                                        fontSize: 15,
                                       ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'x${entry.quantity}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'x${entry.quantity}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      const Spacer(),
-                                      Text(
-                                        'Rs ${entry.subtotal.toStringAsFixed(0)}',
-                                        style: TextStyle(
-                                          color: BBColors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      'Rs ${entry.subtotal.toStringAsFixed(0)}',
+                                      style: TextStyle(
+                                        color: BBColors.red,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
                                       ),
-                                    ],
-                                  );
-                                },
-                              ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ],
                         ),
                       ),
-                    ),
                     const SizedBox(height: 8),
                     Padding(
                       padding: const EdgeInsets.all(0),
@@ -392,7 +382,7 @@ class _CheckoutState extends State<Checkout> {
               ),
             ),
           ),
-        );
+        ));
       },
     );
   }

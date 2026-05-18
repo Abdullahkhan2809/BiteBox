@@ -19,7 +19,7 @@ class _AdduserdetailsState extends State<Adduserdetails> {
   final _fullname = TextEditingController();
   final _PhoneNumber = TextEditingController();
   final _CMSID = TextEditingController();
-  String? _selectedPayment = 'Cash';
+  String? _selectedPayment;
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _AdduserdetailsState extends State<Adduserdetails> {
       _fullname.text = auth.student!.name;
       _PhoneNumber.text = auth.student!.phone;
       _CMSID.text = auth.student!.cmsid;
-      _selectedPayment = auth.student!.paymentMethod;
+      _selectedPayment = auth.student!.paymentMethod.toLowerCase();
     }
   }
 
@@ -147,6 +147,50 @@ class _AdduserdetailsState extends State<Adduserdetails> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                      SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                          value: _selectedPayment,
+                          decoration: InputDecoration(
+                          filled: true,
+                          fillColor: BBColors.border,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 16,
+                          ),
+                        ),
+                        dropdownColor: BBColors.surface2,
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        icon: const Icon(Icons.keyboard_arrow_down, color: BBColors.muted),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'cash',
+                            child: Row(
+                              children: [
+                                Icon(Icons.payments_outlined, color: BBColors.green, size: 20),
+                                SizedBox(width: 10),
+                                Text('Cash'),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'tab',
+                            child: Row(
+                              children: [
+                                Icon(Icons.credit_card, color: BBColors.amber, size: 20),
+                                SizedBox(width: 10),
+                                Text('Tab (Credit)'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() => _selectedPayment = value);
+                        },
                       ),
                       SizedBox(height: 16),
                       Container(

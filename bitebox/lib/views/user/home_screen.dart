@@ -43,7 +43,7 @@ class _UserHomestate extends State<UserHome> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<RestaurantProvider>();
+      context.read<RestaurantProvider>().refresh();
     });
 
     //listen to search field

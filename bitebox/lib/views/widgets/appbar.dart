@@ -25,10 +25,10 @@ class AppbarWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child:Image.asset('assets/images/logo.jpg', height: 74, fit: BoxFit.cover,),
             ),
-            SizedBox(width: 20,),
+            SizedBox(width:   16,),
            
             Text(title, style: GoogleFonts.koulen(
-              fontSize: 30,
+              fontSize: 28,
             )
             ),
           ],
