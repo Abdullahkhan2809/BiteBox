@@ -1,11 +1,7 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
-  "build": {
-    "builder": "NIXPACKS",
-    "buildCommand": "cd bitebox_server && npm install --omit=dev"
-  },
   "deploy": {
-    "startCommand": "cd bitebox_server && node src/app.js",
+    "startCommand": "node src/app.js",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
