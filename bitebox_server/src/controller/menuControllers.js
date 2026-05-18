@@ -43,7 +43,7 @@ exports.addMenuItem = async (req, res) => {
 // PATCH /api/menu/:id  (manager only)
 exports.updateMenuItem = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, is_available } = req.body;
+  const { name, description, price, is_available, image_url } = req.body;
 
   try {
     const result = await db.query(
@@ -52,10 +52,11 @@ exports.updateMenuItem = async (req, res) => {
          name         = COALESCE($1, name),
          description  = COALESCE($2, description),
          price        = COALESCE($3, price),
-         is_available = COALESCE($4, is_available)
-       WHERE id = $5
+         is_available = COALESCE($4, is_available),
+         image_url    = COALESCE($5, image_url)
+       WHERE id = $6
        RETURNING *`,
-      [name, description, price, is_available, id]
+      [name, description, price, is_available, image_url, id]
     );
 
     if (!result.rows[0]) {

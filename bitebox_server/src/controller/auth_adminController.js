@@ -53,7 +53,7 @@ exports.staffLogin = async (req, res) => {
 
   try {
     const result = await db.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT * FROM user_admin WHERE email = $1',
       [email]
     );
 
@@ -101,7 +101,7 @@ exports.forgotPassword = async (req, res) => {
 
   try {
     const result = await db.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT * FROM user_admin WHERE email = $1',
       [email]
     );
 
@@ -114,7 +114,7 @@ exports.forgotPassword = async (req, res) => {
 
     // store OTP in DB with expiry
     await db.query(
-      `UPDATE users SET reset_otp = $1, reset_otp_expiry = NOW() + INTERVAL '10 minutes'
+      `UPDATE user_admin SET reset_otp = $1, reset_otp_expiry = NOW() + INTERVAL '10 minutes'
        WHERE email = $2`,
       [otp, email]
     );
@@ -137,7 +137,7 @@ exports.verifyOtp = async (req, res) => {
 
   try {
     const result = await db.query(
-      `SELECT * FROM users
+      `SELECT * FROM user_admin
        WHERE email = $1
        AND reset_otp = $2
        AND reset_otp_expiry > NOW()`,
@@ -150,7 +150,7 @@ exports.verifyOtp = async (req, res) => {
 
     // invalidate OTP immediately so it can't be reused
     await db.query(
-      `UPDATE users SET reset_otp = NULL, reset_otp_expiry = NULL WHERE email = $1`,
+      `UPDATE user_admin SET reset_otp = NULL, reset_otp_expiry = NULL WHERE email = $1`,
       [email]
     );
 
@@ -184,7 +184,7 @@ exports.resetPassword = async (req, res) => {
     const hash = await bcrypt.hash(new_password, 10);
 
     await db.query(
-      `UPDATE users
+      `UPDATE user_admin
        SET password_hash = $1, reset_otp = NULL, reset_otp_expiry = NULL
        WHERE email = $2`,
       [hash, decoded.email]

@@ -82,6 +82,7 @@ class MenuService {
     String? description,
     double? price,
     bool? isAvailable,
+    String? imageUrl,
   }) async {
     try {
       final Map<String, dynamic> body = {};
@@ -89,6 +90,7 @@ class MenuService {
       if (description != null) body['description'] = description;
       if (price != null)       body['price'] = price;
       if (isAvailable != null) body['is_available'] = isAvailable;
+      if (imageUrl != null)    body['image_url'] = imageUrl;
 
       final response = await http.patch(
         Uri.parse('$_baseUrl/menu/$itemId'),

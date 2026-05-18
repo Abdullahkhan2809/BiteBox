@@ -2,13 +2,12 @@ import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/core/toast.dart';
 import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/services/image_service.dart';
 import 'package:bitebox/services/menu_service.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
-import 'package:bitebox/views/widgets/menuitem_card.dart';
 import 'package:flutter/material.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'dart:ui';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,27 +20,27 @@ class AddmenuItems extends StatefulWidget {
 }
 
 class _AddmenuItemsState extends State<AddmenuItems> {
-  String? selected = 'Meal';
-  final ImagePicker _imagePicker = ImagePicker();
-  XFile? _selectedImage;
+  String? selected = 'Fast Food';
+  String? _imageUrl;
+  bool _isUploading = false;
 
-  final MenuService _menuService =MenuService();
-  final _formkey=GlobalKey<FormState>();
-  
+  final ImageService _imageService = ImageService();
+  final MenuService _menuService = MenuService();
+  final _formkey = GlobalKey<FormState>();
+
   //controller
   late final TextEditingController _namecontorller;
   late final TextEditingController _pricecontroller;
   late final TextEditingController _descriptioncontorller;
 
-  bool _isloading=false;
+  bool _isloading = false;
 
   //for edit and add
-  bool get isEditing=>  widget.existingItem!=null;
+  bool get isEditing => widget.existingItem != null;
 
-    @override
+  @override
   void initState() {
     super.initState();
-    // if editing, pre-fill all fields with existing item data
     _namecontorller = TextEditingController(
       text: widget.existingItem?.name ?? '',
     );
@@ -51,7 +50,25 @@ class _AddmenuItemsState extends State<AddmenuItems> {
     _descriptioncontorller = TextEditingController(
       text: widget.existingItem?.description ?? '',
     );
-    selected = widget.existingItem?.tag ?? 'Meal';
+    selected = widget.existingItem?.tag ?? 'Fast Food';
+    _imageUrl = widget.existingItem?.imageUrl.isNotEmpty == true
+        ? widget.existingItem!.imageUrl
+        : null;
+  }
+
+  Future<void> _pickAndUpload() async {
+    final file = await _imageService.pickImage();
+    if (file == null) return;
+    setState(() => _isUploading = true);
+    final result = await _imageService.uploadImage(file);
+    if (result['success']) {
+      setState(() => _imageUrl = result['image_url'] as String);
+    } else {
+      if (mounted) {
+        BBToast.showToast(context, result['message'] ?? 'Upload failed');
+      }
+    }
+    setState(() => _isUploading = false);
   }
 
   @override
@@ -76,23 +93,22 @@ class _AddmenuItemsState extends State<AddmenuItems> {
     Map<String, dynamic> result;
 
     if (isEditing) {
-      // EDIT existing item
       result = await _menuService.updateMenuItem(
         itemId:       widget.existingItem!.id,
         restaurantId: auth.restaurantId!,
         name:         _namecontorller.text.trim(),
         description:  _descriptioncontorller.text.trim(),
         price:        double.parse(_pricecontroller.text.trim()),
+        imageUrl:     _imageUrl,
       );
     } else {
-      // ADD new item
       result = await _menuService.addMenuItem(
         restaurantId: auth.restaurantId!,
         name:         _namecontorller.text.trim(),
         description:  _descriptioncontorller.text.trim(),
         price:        double.parse(_pricecontroller.text.trim()),
-        tag:          selected ?? 'Meal',
-        imageUrl:     '', // Phase 6: replace with image picker URL
+        tag:          selected ?? 'Fast Food',
+        imageUrl:     _imageUrl ?? '',
       );
     }
 
@@ -190,16 +206,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                         ),
                         const LabelText('Item Icon'),
                         GestureDetector(
-                          onTap: () async {
-                            final pickedFile = await _imagePicker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-                            if (pickedFile != null) {
-                              setState(() {
-                                _selectedImage = pickedFile;
-                              });
-                            }
-                          },
+                          onTap: _isUploading ? null : _pickAndUpload,
                           child: CustomPaint(
                             foregroundPainter: DashedBorderPainter(
                               color: Colors.grey,
@@ -207,27 +214,44 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                             child: Container(
                               width: 130,
                               height: 130,
-                              color: Colors.transparent,
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Item',
-                                    style: TextStyle(
-                                      color: BBColors.hintText,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Picture',
-                                    style: TextStyle(
-                                      color: BBColors.hintText,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ],
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
                               ),
+                              alignment: Alignment.center,
+                              child: _isUploading
+                                  ? const CircularProgressIndicator(
+                                      color: BBColors.red,
+                                      strokeWidth: 2,
+                                    )
+                                  : _imageUrl != null
+                                      ? Image.network(
+                                          _imageUrl!,
+                                          fit: BoxFit.cover,
+                                          width: 130,
+                                          height: 130,
+                                          errorBuilder: (ctx, e, stack) =>
+                                              const Icon(Icons.broken_image,
+                                                  color: BBColors.hintText,
+                                                  size: 40),
+                                        )
+                                      : Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.add_a_photo,
+                                                color: BBColors.hintText,
+                                                size: 32),
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              'Tap to upload',
+                                              style: TextStyle(
+                                                color: BBColors.hintText,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                             ),
                           ),
                         ),
@@ -397,9 +421,9 @@ class RoundedDropdownField extends StatelessWidget {
             color: Color.fromARGB(255, 0, 0, 0),
           ),
           items: [
-            DropdownMenuItem(value: 'Meal', child: Text('Meal')),
-            DropdownMenuItem(value: 'Dessert', child: Text('Dessert')),
-            DropdownMenuItem(value: 'Drink', child: Text('Drink')),
+            DropdownMenuItem(value: 'Fast Food', child: Text('Fast Food')),
+            DropdownMenuItem(value: 'Beverages', child: Text('Beverages')),
+            DropdownMenuItem(value: 'Desserts', child: Text('Desserts')),
           ],
         ),
       ),

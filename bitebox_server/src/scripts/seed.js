@@ -1,4 +1,4 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+require('dotenv').config();
 const db = require('../config/db');
 
 async function seed() {
@@ -23,11 +23,12 @@ async function seed() {
     await db.query(`
       INSERT INTO menu_items (restaurant_id, name, description, price, category, is_available)
       VALUES
-        (1, 'Zinger Burger',   'Crispy zinger patty with sauce',    350, 'Meal',     true),
-        (1, 'Spicy Biryani',   'Karachi style chicken biryani',     280, 'Meal',     true),
-        (1, 'Cold Coffee',     'Blended iced coffee with cream',    180, 'Beverage', true),
-        (1, 'Chocolate Shake', 'Rich chocolate milkshake',          200, 'Beverage', true),
-        (1, 'Samosa (2 pcs)',  'Crispy potato filled samosas',       80, 'Snack',    true)
+        (1, 'Zinger Burger',   'Crispy zinger patty with sauce',    350, 'Fast Food',  true),
+        (1, 'Spicy Biryani',   'Karachi style chicken biryani',     280, 'Fast Food',  true),
+        (1, 'Cold Coffee',     'Blended iced coffee with cream',    180, 'Beverages',  true),
+        (1, 'Chocolate Shake', 'Rich chocolate milkshake',          200, 'Beverages',  true),
+        (1, 'Gulab Jamun',     'Soft fried dough balls in syrup',   120, 'Desserts',   true),
+        (1, 'Brownie Slice',   'Fudgy chocolate brownie',           150, 'Desserts',   true)
       ON CONFLICT DO NOTHING;
     `);
 
