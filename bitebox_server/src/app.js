@@ -28,6 +28,6 @@ app.use('/restaurants',  restaurantRoutes);
 app.get('/', (req, res) => res.send('BiteBox API running'));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://192.168.18.1:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚀 Server running on port ${PORT}`);
 });

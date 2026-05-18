@@ -1,0 +1,7 @@
+providers = ["node"]
+
+[phases.install]
+cmds = ["cd bitebox_server && npm install --omit=dev"]
+
+[start]
+cmd = "cd bitebox_server && node src/app.js"
