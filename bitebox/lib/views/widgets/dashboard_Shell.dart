@@ -3,9 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
-
 class BBSalesChartCard extends StatelessWidget {
-  const BBSalesChartCard({super.key});
+  final List<double> revenue;
+  final List<double> orders;
+  final List<String> xLabels;
+  final List<String> yLabels;
+  final bool         isLoading;
+
+  const BBSalesChartCard({
+    super.key,
+    required this.revenue,
+    required this.orders,
+    required this.xLabels,
+    required this.yLabels,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +76,17 @@ class BBSalesChartCard extends StatelessWidget {
           // Chart canvas
           SizedBox(
             height: 200,
-            child: CustomPaint(
-              painter: _SalesLinePainter(),
-              child: const SizedBox.expand(),
-            ),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator(color: BBColors.red))
+                : CustomPaint(
+                    painter: _SalesLinePainter(
+                      revenue: revenue,
+                      orders:  orders,
+                      xLabels: xLabels,
+                      yLabels: yLabels,
+                    ),
+                    child: const SizedBox.expand(),
+                  ),
           ),
         ],
       ),
@@ -78,13 +97,21 @@ class BBSalesChartCard extends StatelessWidget {
 // ─── Painter ─────────────────────────────────────────────────────────────────
 
 class _SalesLinePainter extends CustomPainter {
-  static const List<double> revenue = [0.49, 0.66, 0.12, 0.84, 0.59, 0.90, 0.80];
-  static const List<double> orders  = [0.46, 0.12, 0.34, 0.45, 0.58, 0.80, 0.92];
-  static const List<String> labels  = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
-  static const List<String> yLabels = [r'$0', r'$500', r'$1k', r'$1.5k', r'$2k'];
+  final List<double> revenue;
+  final List<double> orders;
+  final List<String> xLabels;
+  final List<String> yLabels;
+
+  const _SalesLinePainter({
+    required this.revenue,
+    required this.orders,
+    required this.xLabels,
+    required this.yLabels,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (revenue.isEmpty) return;
     const double padL = 40, padB = 24, padT = 10;
     final double cW = size.width - padL;
     final double cH = size.height - padB - padT;
@@ -105,46 +132,47 @@ class _SalesLinePainter extends CustomPainter {
       c.drawLine(Offset(pL, y), Offset(s.width, y), p);
     }
   }
-void _drawYLabels(Canvas c, double pT, double cH) {
-  for (int i = 0; i <= 4; i++) {
-    final y = pT + cH * (1 - i / 4);
-    final painter = TextPainter(
-      text: TextSpan(
-        text: yLabels[i],
-        style: GoogleFonts.poppins(
-          color: Colors.white.withOpacity(0.45),
-          fontSize: 9,
+
+  void _drawYLabels(Canvas c, double pT, double cH) {
+    for (int i = 0; i <= 4; i++) {
+      final y = pT + cH * (1 - i / 4);
+      final painter = TextPainter(
+        text: TextSpan(
+          text: yLabels[i],
+          style: GoogleFonts.poppins(
+            color: Colors.white.withOpacity(0.45),
+            fontSize: 9,
+          ),
         ),
-      ),
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.right,
-    );
-    painter.layout(maxWidth: 34); // fits within padL=40
-    painter.paint(c, Offset(0, y - painter.height / 2));
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.right,
+      );
+      painter.layout(maxWidth: 34);
+      painter.paint(c, Offset(0, y - painter.height / 2));
+    }
   }
-}
 
   void _drawXLabels(Canvas c, Size s, double pL, double cW) {
-  for (int i = 0; i < labels.length; i++) {
-    final x = pL + (cW / (labels.length - 1)) * i;
-    final painter = TextPainter(
-      text: TextSpan(
-        text: labels[i],
-        style: GoogleFonts.poppins(
-          color: Colors.white.withOpacity(0.45),
-          fontSize: 9,
+    for (int i = 0; i < xLabels.length; i++) {
+      final x = pL + (cW / (xLabels.length - 1)) * i;
+      final painter = TextPainter(
+        text: TextSpan(
+          text: xLabels[i],
+          style: GoogleFonts.poppins(
+            color: Colors.white.withOpacity(0.45),
+            fontSize: 9,
+          ),
         ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    painter.layout();
-    // Center the label under the data point
-    painter.paint(c, Offset(x - painter.width / 2, s.height - painter.height));
+        textDirection: TextDirection.ltr,
+      );
+      painter.layout();
+      painter.paint(c, Offset(x - painter.width / 2, s.height - painter.height));
+    }
   }
-}
 
-void _drawLine(Canvas c, List<double> data, Color color,
+  void _drawLine(Canvas c, List<double> data, Color color,
       double pL, double pT, double cW, double cH) {
+    if (data.length < 2) return;
     final pts = List.generate(data.length, (i) => Offset(
       pL + (cW / (data.length - 1)) * i,
       pT + cH * (1 - data[i]),
@@ -155,9 +183,9 @@ void _drawLine(Canvas c, List<double> data, Color color,
       ..moveTo(pts.first.dx, pT + cH)
       ..lineTo(pts.first.dx, pts.first.dy);
     for (int i = 0; i < pts.length - 1; i++) {
-      final cp1 = Offset((pts[i].dx + pts[i+1].dx) / 2, pts[i].dy);
-      final cp2 = Offset((pts[i].dx + pts[i+1].dx) / 2, pts[i+1].dy);
-      fill.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, pts[i+1].dx, pts[i+1].dy);
+      final cp1 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i].dy);
+      final cp2 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i + 1].dy);
+      fill.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, pts[i + 1].dx, pts[i + 1].dy);
     }
     fill.lineTo(pts.last.dx, pT + cH);
     fill.close();
@@ -166,9 +194,9 @@ void _drawLine(Canvas c, List<double> data, Color color,
     // Line
     final line = Path()..moveTo(pts.first.dx, pts.first.dy);
     for (int i = 0; i < pts.length - 1; i++) {
-      final cp1 = Offset((pts[i].dx + pts[i+1].dx) / 2, pts[i].dy);
-      final cp2 = Offset((pts[i].dx + pts[i+1].dx) / 2, pts[i+1].dy);
-      line.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, pts[i+1].dx, pts[i+1].dy);
+      final cp1 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i].dy);
+      final cp2 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i + 1].dy);
+      line.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, pts[i + 1].dx, pts[i + 1].dy);
     }
     c.drawPath(line, Paint()
       ..color = color
@@ -183,13 +211,14 @@ void _drawLine(Canvas c, List<double> data, Color color,
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter _) => false;
+  bool shouldRepaint(covariant _SalesLinePainter old) =>
+      old.revenue != revenue || old.orders != orders;
 }
 
 // ─── Legend dot ──────────────────────────────────────────────────────────────
 
 class _LegendDot extends StatelessWidget {
-  final Color color;
+  final Color  color;
   final String label;
   const _LegendDot({required this.color, required this.label});
 

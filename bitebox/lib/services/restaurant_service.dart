@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bitebox/core/constant.dart';
 import 'package:bitebox/models/retaurant_model.dart';
 import 'package:bitebox/services/storage_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class RestaurantService {
@@ -22,24 +23,30 @@ class RestaurantService {
   }
 
   Future<List<Restaurant>> refreshrestaurant() async {
+    late http.Response response;
     try {
-      final response = await http.get(
+      response = await http.get(
         Uri.parse('$_baseUrl/restaurants'),
         headers: _authHeader,
       ).timeout(_timeout);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> jsonlist = jsonDecode(response.body);
-        final list = jsonlist
-            .map((e) => Restaurant.fromJson(e as Map<String, dynamic>))
-            .toList();
-        await _service.savesRestaurant(list);
-        return list;
-      }
-      return _service.getRestaurnat();
     } catch (e) {
+      // Network unreachable — return offline cache
+      debugPrint('[RestaurantService] network error: $e');
       return _service.getRestaurnat();
     }
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final List<dynamic> jsonlist = jsonDecode(response.body);
+      final list = jsonlist
+          .map((e) => Restaurant.fromJson(e as Map<String, dynamic>))
+          .toList();
+      await _service.savesRestaurant(list);
+      return list;
+    }
+
+    // Server returned an error — throw so the provider can surface it
+    debugPrint('[RestaurantService] server error ${response.statusCode}: ${response.body}');
+    throw Exception('${response.statusCode}: ${response.body}');
   }
 
   Future<Map<String, dynamic>> toggleRestaurant({

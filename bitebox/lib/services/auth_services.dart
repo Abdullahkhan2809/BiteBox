@@ -54,7 +54,7 @@ class AuthServices {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       ).timeout(_timeout);
-
+      print(response);
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200 || response.statusCode == 201) {
         await _service.saveToken(data['token'] as String);
@@ -67,7 +67,9 @@ class AuthServices {
         return {'success': false, 'message': data['message'] ?? 'Invalid Email or password'};
       }
     } catch (e) {
+      print(e);
       return {'success': false, 'message': e.toString()};
+      
     }
   }
 

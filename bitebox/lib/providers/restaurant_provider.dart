@@ -23,13 +23,13 @@ class RestaurantProvider extends ChangeNotifier {
   Future<void> loadRestaurants() async {
     _setLoading(true);
     try {
-      final list = await _service.getRestaurant();
+      final list = await _service.refreshrestaurant();
       _restaurants = list;
       _isOffline = false;
       _errorMessage = null;
     } catch (e) {
       _isOffline = true;
-      _errorMessage = 'Showing cached data';
+      _errorMessage = e.toString();
     }
     _setLoading(false);
   }
@@ -46,6 +46,7 @@ class RestaurantProvider extends ChangeNotifier {
       _errorMessage = null;
     } catch (e) {
       _isOffline = true;
+      _errorMessage = e.toString();
     }
     _setLoading(false);
   }

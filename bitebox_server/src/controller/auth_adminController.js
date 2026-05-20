@@ -56,13 +56,19 @@ exports.staffLogin = async (req, res) => {
       'SELECT * FROM user_admin WHERE email = $1',
       [email]
     );
-
+    console.log(password);
     const user = result.rows[0];
+    // console.log(user);
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
     const isMatch = await bcrypt.compare(password, user.password_hash);
+    console.log("ismatch" , isMatch);
+        console.log(user.password_hash);
+
+  const hash = await bcrypt.hash(password, 10);
+//   console.log("hash",hash);
+  
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }

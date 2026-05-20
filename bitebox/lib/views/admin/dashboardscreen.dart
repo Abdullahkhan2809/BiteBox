@@ -1,4 +1,5 @@
 import 'package:bitebox/core/routes.dart';
+import 'package:bitebox/providers/analytics_provider.dart';
 import 'package:bitebox/providers/auth_provider.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (auth.restaurantId != null) {
         context.read<OrderProvider>().fetchOrders(
           restaurantId: auth.restaurantId!,
-          status: 'pending', // show pending orders on dashboard
+          status: 'pending',
         );
+        context.read<AnalyticsProvider>().fetchStats(auth.restaurantId!);
       }
     });
   }
@@ -49,10 +51,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // ── Stat Cards — Consumer rebuilds when orders change ──────
-              Consumer<OrderProvider>(
-                builder: (context, orderProvider, child) {
+              // ── Stat Cards ────────────────────────────────────────────
+              Consumer2<OrderProvider, AnalyticsProvider>(
+                builder: (context, orderProvider, analytics, child) {
                   final orderCount = orderProvider.orders.length;
+                  final revenue    = analytics.totalRevenue.toStringAsFixed(0);
 
                   return Row(
                     children: [
@@ -62,9 +65,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           iconColor: BBColors.red,
                           iconBg: const Color(0x26E51904),
                           label: 'Revenue',
-                          // Phase 6: replace with real revenue from analytics API
-                          value: 'Rs 0',
-                          change: 'Live',
+                          value: 'Rs $revenue',
+                          change: 'This week',
                           changeUp: true,
                         ),
                       ),
@@ -75,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           iconColor: BBColors.amber,
                           iconBg: const Color(0x20EF9F27),
                           label: 'Orders',
-                          value: '$orderCount',   // ← real order count
+                          value: '$orderCount',
                           change: 'Pending',
                           changeUp: true,
                         ),
@@ -86,8 +88,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ── Sales Chart — stays hardcoded until Phase 6 ────────────
-              const BBSalesChartCard(),
+              // ── Sales Chart — live data from analytics API ─────────────
+              Consumer<AnalyticsProvider>(
+                builder: (context, analytics, child) => BBSalesChartCard(
+                  revenue:   analytics.normalizedRevenue,
+                  orders:    analytics.normalizedOrders,
+                  xLabels:   analytics.xLabels,
+                  yLabels:   analytics.yLabels,
+                  isLoading: analytics.isLoading,
+                ),
+              ),
               const SizedBox(height: 16),
 
               // ── Live Orders Header ─────────────────────────────────────

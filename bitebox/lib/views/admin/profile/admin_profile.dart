@@ -1,7 +1,7 @@
 import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/providers/auth_provider.dart';
 import 'package:bitebox/providers/order_provider.dart';
-import 'package:bitebox/views/admin/profile/editprofile.dart';
+import 'package:bitebox/services/storage_service.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
@@ -16,27 +16,19 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // ── Hardcoded data for now (replace with your Hive/backend model later) ──
-  final String _name = 'Abdullah Khan';
-  final String _role = 'Restaurant Admin';
-  final String _email = 'john@restaurant.com';
-  final String _phone = '+92 300 1234567';
-  final String _location = 'Karachi, Pakistan';
-  final String _restaurant = 'The Grand Table';
-  final int _totalOrders = 220;
-  final int _totalMenuItems = 20;
-  final double _rating = 4.6;
+  final StorageService _storage = StorageService();
 
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final orders = context.watch<OrderProvider>();
 
-    final name = auth.student?.name ?? 'Staff Member';
-    final role = auth.role ?? 'Staff';
-    final email =
-        auth.student?.name ?? '—'; // Phase 6: add email to staff model
-    final phone = auth.student?.phone ?? '—';
+    final name       = _storage.getStudentName() ?? 'Staff Member';
+    final role       = auth.role ?? 'Staff';
+    final email      = _storage.getEmail() ?? '—';
+    final phone      = _storage.getStudentPhone() ?? '—';
+    final location   = _storage.getLocation() ?? '—';
+    final restaurant = _storage.getRestaurantName() ?? '—';
 
     return Scaffold(
       appBar: PreferredSize(
@@ -65,10 +57,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: Border.all(color: BBColors.red, width: 3),
                 ),
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/logo.jpg', // replace with actual profile pic
-                    fit: BoxFit.cover,
-                  ),
+                  child: _storage.getProfilePhoto() != null
+                      ? Image.network(
+                          _storage.getProfilePhoto()!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              Image.asset('assets/images/logo.jpg', fit: BoxFit.cover),
+                        )
+                      : Image.asset('assets/images/logo.jpg', fit: BoxFit.cover),
                 ),
               ),
 
@@ -124,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(width: 10),
                   _buildStatCard(
                     label: 'RATING',
-                    value: _rating.toString(),
+                    value: '4.6',
                     isRating: true,
                   ),
                 ],
@@ -152,13 +148,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildInfoRow(label: 'Email', value: _email),
+                    _buildInfoRow(label: 'Email', value: email),
                     _buildDivider(),
-                    _buildInfoRow(label: 'Phone', value: _phone),
+                    _buildInfoRow(label: 'Phone', value: phone),
                     _buildDivider(),
-                    _buildInfoRow(label: 'Location', value: _location),
+                    _buildInfoRow(label: 'Location', value: location),
                     _buildDivider(),
-                    _buildInfoRow(label: 'Restaurant', value: _restaurant),
+                    _buildInfoRow(label: 'Restaurant', value: restaurant),
                   ],
                 ),
               ),
@@ -170,7 +166,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 label: 'Edit Profile',
                 filled: true,
                 onPressed: () {
-                  Navigator.pushNamed(context, BiteBoxRoutes.adminEditProfile);
+                  Navigator.pushNamed(context, BiteBoxRoutes.adminEditProfile)
+                      .then((_) { if (mounted) setState(() {}); });
                 },
               ),
 

@@ -116,6 +116,8 @@ class AuthProvider extends ChangeNotifier {
       _token        = _storage.getTokens();
       _role         = data['role'] as String?;
       _restaurantid = data['restaurant_id']?.toString();
+      final name = data['name'] as String?;
+      if (name != null) await _storage.saveStaffName(name);
       _errorMsg = null;
       _isloading=false;
       return true;

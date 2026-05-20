@@ -1,5 +1,6 @@
 import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/providers/auth_provider.dart';
+import 'package:bitebox/services/image_service.dart';
 import 'package:bitebox/services/storage_service.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
@@ -24,7 +25,10 @@ class _EditprofileState extends State<Editprofile> {
   final _locationController=TextEditingController();
   final _biodescriptionController=TextEditingController();
 
-  bool _isLoading=false;
+  final ImageService _imageService = ImageService();
+  String? _profilePhotoUrl;
+  bool _isUploadingPhoto = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -40,19 +44,30 @@ class _EditprofileState extends State<Editprofile> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      if (auth.student != null) {
-        setState(() {
-          _nameController.text = auth.student?.name ?? '';
-          _emailController.text = auth.student?.email ?? '';
-          _phoneController.text = auth.student?.phone ?? '';
-          _restaurantnameController.text = auth.student?.restaurantName ?? '';
-          _locationController.text = auth.student?.location ?? '';
-          _biodescriptionController.text = auth.student?.bio ?? '';
-        });
-      }
-    });
+    final storage = StorageService();
+    _nameController.text           = storage.getStudentName() ?? '';
+    _emailController.text          = storage.getEmail() ?? '';
+    _phoneController.text          = storage.getStudentPhone() ?? '';
+    _restaurantnameController.text = storage.getRestaurantName() ?? '';
+    _locationController.text       = storage.getLocation() ?? '';
+    _biodescriptionController.text = storage.getBio() ?? '';
+    _profilePhotoUrl               = storage.getProfilePhoto();
+  }
+
+  Future<void> _pickAndUploadPhoto() async {
+    final file = await _imageService.pickImage();
+    if (file == null) return;
+    setState(() => _isUploadingPhoto = true);
+    final result = await _imageService.uploadImage(file);
+    if (result['success'] == true) {
+      setState(() => _profilePhotoUrl = result['image_url'] as String);
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(result['message'] ?? 'Upload failed'),
+        backgroundColor: Colors.red,
+      ));
+    }
+    if (mounted) setState(() => _isUploadingPhoto = false);
   }
 
    Future<void> _saveChanges() async {
@@ -76,6 +91,9 @@ class _EditprofileState extends State<Editprofile> {
           restaurantName: _restaurantnameController.text,
           bio: _biodescriptionController.text,
         );
+        if (_profilePhotoUrl != null) {
+          await storage.saveProfilePhoto(_profilePhotoUrl!);
+        }
 
         // 3. REFRESH STATE
         auth.loadSession();
@@ -137,10 +155,23 @@ class _EditprofileState extends State<Editprofile> {
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: BBColors.red,
-                          width: 3,
-                        )
+                        border: Border.all(color: BBColors.red, width: 3),
+                      ),
+                      child: ClipOval(
+                        child: _isUploadingPhoto
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: BBColors.red, strokeWidth: 2,
+                                ),
+                              )
+                            : _profilePhotoUrl != null
+                                ? Image.network(
+                                    _profilePhotoUrl!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) =>
+                                        const Icon(Icons.person, color: Colors.grey, size: 50),
+                                  )
+                                : const Icon(Icons.person, color: Colors.grey, size: 50),
                       ),
                     ),
                     Positioned(
@@ -151,21 +182,22 @@ class _EditprofileState extends State<Editprofile> {
                           color: BBColors.red,
                           borderRadius: BorderRadius.circular(20),
                         ),
-            
-                        child: IconButton(onPressed: (){}, 
-                        icon: Icon(Icons.edit_outlined)),
-                      )
-                      )
+                        child: IconButton(
+                          onPressed: _isUploadingPhoto ? null : _pickAndUploadPhoto,
+                          icon: const Icon(Icons.edit_outlined),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 8,),
-                TextButton(onPressed: (){
-                  //open image picker
-                },
-                child: Text('Change Photo', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: BBColors.darkRed,
-                ),)),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: _isUploadingPhoto ? null : _pickAndUploadPhoto,
+                  child: Text('Change Photo', style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: BBColors.darkRed,
+                  )),
+                ),
                 const SizedBox(height: 14,),
                //name text field
               _buildTextField(controller:_nameController , label:'Full Name', validator:(v) => (v == null || v.isEmpty) ? 'Enter name' : null,),

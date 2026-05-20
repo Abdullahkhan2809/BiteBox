@@ -4,9 +4,11 @@ import 'package:bitebox/models/menu_item_model.dart';
 import 'package:bitebox/models/retaurant_model.dart';
 import 'package:bitebox/providers/auth_provider.dart';
 import 'package:bitebox/providers/cart_provider.dart';
+import 'package:bitebox/providers/analytics_provider.dart';
 import 'package:bitebox/providers/order_provider.dart';
 import 'package:bitebox/providers/restaurant_provider.dart';
 import 'package:bitebox/views/admin/admin_nav.dart';
+import 'package:bitebox/views/admin/dashboardscreen.dart';
 import 'package:bitebox/views/auth/view/login_admin.dart';
 import 'package:bitebox/views/user/home_screen.dart';
 import 'package:bitebox/views/widgets/colors.dart';
@@ -37,6 +39,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => RestaurantProvider()..loadRestaurants()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
       ],
       child: const MyApp(),
     ),
@@ -78,7 +81,7 @@ class MyApp extends StatelessWidget {
             builder: (context, auth, _) {
               if (auth.isStaff) return const AdminNav(index: 0);
               if (auth.isStudent) return const UserHome();
-              return const LoginAdmin();
+              return const UserHome();
             },
           ),
         ),

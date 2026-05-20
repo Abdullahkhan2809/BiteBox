@@ -6,7 +6,8 @@ exports.getMenuItems = async (req, res) => {
   try {
     const result = await db.query(
       `SELECT * FROM menu_items
-       WHERE restaurant_id = $1 AND is_available = true
+       WHERE restaurant_id = $1
+         AND COALESCE(is_available, true) = true
        ORDER BY category`,
       [restaurant_id]
     );
@@ -28,10 +29,10 @@ exports.addMenuItem = async (req, res) => {
   try {
     const result = await db.query(
       `INSERT INTO menu_items
-         (restaurant_id, name, description, price, category, image_url)
-       VALUES ($1, $2, $3, $4, $5, $6)
+         (restaurant_id, name, description, price, category, image_url, is_available)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [restaurant_id, name, description, price, category, image_url]
+      [restaurant_id, name, description, price, category, image_url, true]
     );
     return res.status(201).json(result.rows[0]);
   } catch (err) {

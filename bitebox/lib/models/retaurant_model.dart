@@ -36,8 +36,8 @@ class Restaurant extends HiveObject {
         name: json['name'] as String,
         cuisine: json['cuisine'] as String? ?? '',
         imageUrl: json['image_url'] as String? ?? '',
-        rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-        reviewCount: json['review_count'] as int? ?? 0,
+        rating: double.parse((json['rating'] ?? 0).toString()),
+        reviewCount: int.parse((json['review_count'] ?? 0).toString()),
         menu: (json['menu'] as List? ?? [])
             .map((item) => MenuItem.fromJson(item as Map<String, dynamic>))
             .toList(),

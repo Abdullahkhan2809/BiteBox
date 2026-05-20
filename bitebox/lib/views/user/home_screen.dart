@@ -99,7 +99,7 @@ class _UserHomestate extends State<UserHome> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Hi, ${auth.student?.name.split('').first ?? 'Guest'}!',
+                  'Hi, ${auth.student?.name.split(' ').first ?? 'Guest'}!',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

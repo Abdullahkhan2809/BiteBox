@@ -130,5 +130,5 @@ class MenuService {
     }
   }
 
-  Future<dynamic> getMenu(String id) async {}
+  Future<List<MenuItem>> getMenu(String restaurantId) => getMenuItems(restaurantId);
 }

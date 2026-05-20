@@ -15,6 +15,10 @@ class OrderService {
         'Authorization': 'Bearer ${_storage.getTokens() ?? ''}',
       };
 
+  Map<String, String> get _authHeadersGet => {
+        'Authorization': 'Bearer ${_storage.getTokens() ?? ''}',
+      };
+
   Future<Map<String, dynamic>> placeOrder({
     required String studentId,
     required String studentName,
@@ -62,7 +66,7 @@ class OrderService {
         },
       );
 
-      final response = await http.get(uri, headers: _authHeaders)
+      final response = await http.get(uri, headers: _authHeadersGet)
           .timeout(_timeout);
 
       if (response.statusCode == 200) {

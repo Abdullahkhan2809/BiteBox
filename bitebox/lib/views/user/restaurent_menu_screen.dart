@@ -38,9 +38,9 @@ class _RestaurentMenuScreenState extends State<RestaurentMenuScreen> {
   Future<void> _loadMenu() async {
     setState(() => isloading = true);
     try {
-      final fetchedItems = await _menuService.getMenu(widget.restaurant.id);
+      final fetched = await _menuService.getMenu(widget.restaurant.id);
       setState(() {
-        items = fetchedItems;
+        items = fetched;
         isloading = false;
       });
     } catch (e) {
@@ -52,7 +52,6 @@ class _RestaurentMenuScreenState extends State<RestaurentMenuScreen> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = context.watch<CartProvider>();
-    final menuItems = widget.restaurant.menu;
     final itemCount = cartProvider.itemCount;
 
     return Scaffold(
@@ -63,7 +62,7 @@ class _RestaurentMenuScreenState extends State<RestaurentMenuScreen> {
       body: RefreshIndicator(
         onRefresh: () => _menuService
             .refreshMenuItems(widget.restaurant.id)
-            .then((items) => setState(() => items = items)),
+            .then((fetched) => setState(() => items = fetched)),
         child: Column(
           children: [
             Expanded(
@@ -190,38 +189,50 @@ class _RestaurentMenuScreenState extends State<RestaurentMenuScreen> {
                       ),
                     ),
                   ),
-                  //menu items lists
-                  // --- Menu Items List ---
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final item = menuItems[index];
-        
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Menuitemcarduser(
-                          title: item.name,
-                          category: item.tag,
-                          itemDescription: item.description,
-                          price: item.price.toStringAsFixed(0),
-                          imageUrl: item.imageUrl,
-                          onTap: (){
-                             context.read<CartProvider>().addItem(item);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      '${item.name} added to cart',
-                                      style: GoogleFonts.poppins(),
-                                    ),
-                                    backgroundColor: BBColors.darkRed,
-                                    duration: const Duration(seconds: 1),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
-                          },
+                  // --- Menu Items ---
+                  if (isloading)
+                    const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator(color: BBColors.red)),
+                    )
+                  else if (items.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          'No menu items available',
+                          style: GoogleFonts.poppins(color: BBColors.muted, fontSize: 14),
                         ),
-                      );
-                    }, childCount: menuItems.length),
-                  ),
+                      ),
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final item = items[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Menuitemcarduser(
+                            title: item.name,
+                            category: item.tag,
+                            itemDescription: item.description,
+                            price: item.price.toStringAsFixed(0),
+                            imageUrl: item.imageUrl,
+                            onTap: () {
+                              context.read<CartProvider>().addItem(item);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${item.name} added to cart',
+                                    style: GoogleFonts.poppins(),
+                                  ),
+                                  backgroundColor: BBColors.darkRed,
+                                  duration: const Duration(seconds: 1),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }, childCount: items.length),
+                    ),
                   const SliverToBoxAdapter(child: Divider(height: 1)),
                   const SliverToBoxAdapter(child: FeedbackFooter()),
                   const SliverToBoxAdapter(child: Divider(height: 1)),

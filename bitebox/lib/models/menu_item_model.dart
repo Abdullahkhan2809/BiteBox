@@ -43,7 +43,7 @@ class MenuItem extends HiveObject {
         id:           json['id'].toString(),
         name:         json['name'] as String,
         description:  json['description'] as String? ?? '',
-        price:        (json['price'] as num).toDouble(),
+        price:        double.parse(json['price'].toString()),
         tag:          json['category'] as String? ?? '',
         imageUrl:     json['image_url'] as String? ?? '',
         isAvailable:  json['is_available'] as bool? ?? true,

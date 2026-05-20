@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:bitebox/core/constant.dart';
 import 'package:bitebox/services/storage_service.dart';
@@ -24,10 +25,18 @@ class ImageService {
     try {
       final token = _storage.getTokens();
       final uri = Uri.parse('$_baseUrl/upload');
+      final bytes = await file.readAsBytes();
+
+      final ext = file.name.split('.').last.toLowerCase();
+      final mimeSubtype = ext == 'png' ? 'png' : 'jpeg';
 
       final request = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = 'Bearer $token'
-        ..files.add(await http.MultipartFile.fromPath('image', file.path));
+        ..files.add(http.MultipartFile.fromBytes(
+          'image', bytes,
+          filename: file.name,
+          contentType: MediaType('image', mimeSubtype),
+        ));
 
       final response = await request.send();
       final body = json.decode(await response.stream.bytesToString());
@@ -37,7 +46,7 @@ class ImageService {
       }
       return {'success': false, 'message': body['message'] ?? 'Upload failed'};
     } catch (e) {
-      return {'success': false, 'message': 'No internet connection'};
+      return {'success': false, 'message': e.toString()};
     }
   }
 }

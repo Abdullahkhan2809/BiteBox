@@ -60,6 +60,14 @@ class StorageService {
   String? getStudentPaymentMethod() =>
       _userData.get('payment_method') as String?;
 
+  Future<void> saveStaffName(String name) async => _userData.put('name', name);
+  String? getEmail()          => _userData.get('email')           as String?;
+  String? getLocation()       => _userData.get('location')        as String?;
+  String? getRestaurantName() => _userData.get('restaurant_name') as String?;
+  String? getBio()            => _userData.get('bio')             as String?;
+  String? getProfilePhoto()   => _userData.get('profile_photo')   as String?;
+  Future<void> saveProfilePhoto(String url) async => _userData.put('profile_photo', url);
+
   Future<void> saveStaffSession({
     required String role,
     required String? restaurantId,
@@ -144,5 +152,6 @@ class StorageService {
     await _userData.put('location', location);
     await _userData.put('restaurant_name', restaurantName);
     await _userData.put('bio', bio);
+    await _userData.flush(); // force disk write so data survives force-kill
   }
 }

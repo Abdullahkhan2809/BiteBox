@@ -19,6 +19,12 @@ class _MenuState extends State<Menu> {
   List<MenuItem> _items = [];
   bool _isloading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loaditem());
+  }
+
   Future<void> _loaditem() async {
     final auth = context.read<AuthProvider>();
     if (auth.restaurantId == null) {
