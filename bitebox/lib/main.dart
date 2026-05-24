@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
             builder: (context, auth, _) {
               if (auth.isStaff) return const AdminNav(index: 0);
               if (auth.isStudent) return const UserHome();
-              return const UserHome();
+              return const AdminNav();
             },
           ),
         ),

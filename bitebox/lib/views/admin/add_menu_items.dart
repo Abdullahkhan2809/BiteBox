@@ -42,14 +42,11 @@ class _AddmenuItemsState extends State<AddmenuItems> {
   void initState() {
     super.initState();
     _namecontorller = TextEditingController(
-      text: widget.existingItem?.name ?? '',
-    );
+      text: widget.existingItem?.name ?? '',);
     _pricecontroller = TextEditingController(
-      text: widget.existingItem?.price.toStringAsFixed(0) ?? '',
-    );
+      text: widget.existingItem?.price.toStringAsFixed(0) ?? '',);
     _descriptioncontorller = TextEditingController(
-      text: widget.existingItem?.description ?? '',
-    );
+      text: widget.existingItem?.description ?? '',);
     selected = widget.existingItem?.tag ?? 'Fast Food';
     _imageUrl = widget.existingItem?.imageUrl.isNotEmpty == true
         ? widget.existingItem!.imageUrl
@@ -72,14 +69,14 @@ class _AddmenuItemsState extends State<AddmenuItems> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _namecontorller.dispose();
     _pricecontroller.dispose();
     _descriptioncontorller.dispose();
     super.dispose();
   }
 
-   Future<void> _saveItem() async {
+  Future<void> _saveItem() async {
     if (!_formkey.currentState!.validate()) return;
 
     final auth = context.read<AuthProvider>();
@@ -94,30 +91,27 @@ class _AddmenuItemsState extends State<AddmenuItems> {
 
     if (isEditing) {
       result = await _menuService.updateMenuItem(
-        itemId:       widget.existingItem!.id,
+        itemId: widget.existingItem!.id,
         restaurantId: auth.restaurantId!,
-        name:         _namecontorller.text.trim(),
-        description:  _descriptioncontorller.text.trim(),
-        price:        double.parse(_pricecontroller.text.trim()),
-        imageUrl:     _imageUrl,
+        name: _namecontorller.text.trim(),
+        description: _descriptioncontorller.text.trim(),
+        price: double.parse(_pricecontroller.text.trim()),
+        imageUrl: _imageUrl,
       );
     } else {
       result = await _menuService.addMenuItem(
         restaurantId: auth.restaurantId!,
-        name:         _namecontorller.text.trim(),
-        description:  _descriptioncontorller.text.trim(),
-        price:        double.parse(_pricecontroller.text.trim()),
-        tag:          selected ?? 'Fast Food',
-        imageUrl:     _imageUrl ?? '',
+        name: _namecontorller.text.trim(),
+        description: _descriptioncontorller.text.trim(),
+        price: double.parse(_pricecontroller.text.trim()),
+        tag: selected ?? 'Fast Food',
+        imageUrl: _imageUrl ?? '',
       );
     }
 
     if (mounted) {
       if (result['success']) {
-        BBToast.showToast(
-          context,
-          isEditing ? 'Item updated!' : 'Item added!',
-        );
+        BBToast.showToast(context, isEditing ? 'Item updated!' : 'Item added!');
         // go back to menu tab
         Navigator.pushReplacementNamed(
           context,
@@ -131,6 +125,7 @@ class _AddmenuItemsState extends State<AddmenuItems> {
 
     setState(() => _isloading = false);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,33 +220,37 @@ class _AddmenuItemsState extends State<AddmenuItems> {
                                       strokeWidth: 2,
                                     )
                                   : _imageUrl != null
-                                      ? Image.network(
-                                          _imageUrl!,
-                                          fit: BoxFit.cover,
-                                          width: 130,
-                                          height: 130,
-                                          errorBuilder: (ctx, e, stack) =>
-                                              const Icon(Icons.broken_image,
-                                                  color: BBColors.hintText,
-                                                  size: 40),
-                                        )
-                                      : Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(Icons.add_a_photo,
-                                                color: BBColors.hintText,
-                                                size: 32),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              'Tap to upload',
-                                              style: TextStyle(
-                                                color: BBColors.hintText,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
+                                  ? Image.network(
+                                      _imageUrl!,
+                                      fit: BoxFit.cover,
+                                      width: 130,
+                                      height: 130,
+                                      errorBuilder: (ctx, e, stack) =>
+                                          const Icon(
+                                            Icons.broken_image,
+                                            color: BBColors.hintText,
+                                            size: 40,
+                                          ),
+                                    )
+                                  : Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.add_a_photo,
+                                          color: BBColors.hintText,
+                                          size: 32,
                                         ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          'Tap to upload',
+                                          style: TextStyle(
+                                            color: BBColors.hintText,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ),
                         ),
@@ -442,7 +441,8 @@ class DashedBorderPainter extends CustomPainter {
     this.color = Colors.black,
     this.strokeWidth = 1.5,
     this.dashWidth = 6.0,
-    this.dashSpace = 4.0, this.addpicture,
+    this.dashSpace = 4.0,
+    this.addpicture,
   });
 
   @override

@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(Get-NetFirewallRule -DisplayName \"BiteBox Server Port 3000\" -ErrorAction SilentlyContinue)"
-    ]
-  }
-}

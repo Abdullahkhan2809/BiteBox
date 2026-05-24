@@ -1,7 +1,8 @@
 class AppConstants {
 
-  static const String baseUrl = 'http://192.168.18.3:3000';
+  static const String baseUrl = 'http://172.26.109.249:3000';
   static const String appName = 'BiteBox';
   static const double defaultTabLimit = 5000.00;
   static const Duration requestTimeout = Duration(seconds: 15);
 }
+
