@@ -120,81 +120,81 @@ JWT is persisted in `flutter_secure_storage` and attached to every API request a
 ## Database Schema
 
 ```sql
--- Universities onboarded to BiteBox
-CREATE TABLE universities (
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL,
-    location    VARCHAR(255),
-    domain_name VARCHAR(100) UNIQUE,   -- e.g. 'nust.edu.pk'
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+CREATE TABLE university (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    location VARCHAR(255),
+    domain_name VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Staff and admin accounts (NOT students)
-CREATE TABLE users (
-    id            SERIAL PRIMARY KEY,
-    university_id INT REFERENCES universities(id) ON DELETE CASCADE,
-    restaurant_id INT,                 -- NULL for super_admin
-    name          VARCHAR(100) NOT NULL,
-    email         VARCHAR(100) UNIQUE NOT NULL,
+CREATE TABLE restaurants_category (
+    id SERIAL PRIMARY KEY,
+    university_id INT REFERENCES university(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    category VARCHAR(50),
+    image_url TEXT,
+    is_open BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE user_admin (
+    id SERIAL PRIMARY KEY,
+    university_id INT REFERENCES university(id) ON DELETE CASCADE,
+    restaurant_id INT REFERENCES restaurants_category(id) ON DELETE SET NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role          VARCHAR(20) CHECK (role IN ('super_admin', 'cafe_manager', 'staff')),
-    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role VARCHAR(20) CHECK (role IN ('super_admin', 'cafe_manager', 'staff')),
+    reset_otp VARCHAR(6),
+    reset_otp_expiry TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Students (lazy-registered on first CMS ID login)
+
+
 CREATE TABLE students (
-    cms_id          VARCHAR(50) PRIMARY KEY,
-    university_id   INT REFERENCES universities(id) ON DELETE CASCADE,
-    name            VARCHAR(100) NOT NULL,
+    cms_id VARCHAR(50) PRIMARY KEY,
+    university_id INT REFERENCES university(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
     pending_balance DECIMAL(10, 2) DEFAULT 0.00,
-    max_limit       DECIMAL(10, 2) DEFAULT 5000.00,
-    is_active       BOOLEAN DEFAULT TRUE,
-    last_order_at   TIMESTAMP,
+    max_limit DECIMAL(10, 2) DEFAULT 5000.00,
+    is_active BOOLEAN DEFAULT TRUE,
+    contact_number VARCHAR(13) DEFAULT '+92',
+    last_order_at TIMESTAMP,
     CONSTRAINT check_positive_balance CHECK (pending_balance >= 0)
 );
 
--- Cafes / restaurants within a university
-CREATE TABLE restaurants (
-    id            SERIAL PRIMARY KEY,
-    university_id INT REFERENCES universities(id) ON DELETE CASCADE,
-    name          VARCHAR(100) NOT NULL,
-    category      VARCHAR(50),         -- e.g. 'Fast Food', 'Juice Bar'
-    image_url     TEXT,
-    is_open       BOOLEAN DEFAULT TRUE
-);
-
--- Menu items per restaurant
 CREATE TABLE menu_items (
-    id            SERIAL PRIMARY KEY,
-    restaurant_id INT REFERENCES restaurants(id) ON DELETE CASCADE,
-    name          VARCHAR(100) NOT NULL,
-    description   TEXT,
-    price         DECIMAL(10, 2) NOT NULL,
-    image_url     TEXT,
-    is_available  BOOLEAN DEFAULT TRUE,
-    category      VARCHAR(50)          -- e.g. 'Deals', 'Beverages'
+    id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants_category(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    image_url TEXT,
+    is_available BOOLEAN DEFAULT TRUE,
+    category VARCHAR(50)
 );
 
--- Orders placed by students
+
 CREATE TABLE orders (
-    id             SERIAL PRIMARY KEY,
-    student_id     VARCHAR(50) REFERENCES students(cms_id),
-    restaurant_id  INT REFERENCES restaurants(id),
-    total_amount   DECIMAL(10, 2) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    student_id VARCHAR(50) REFERENCES students(cms_id),
+    restaurant_id INT REFERENCES restaurants_category(id),
+    total_amount DECIMAL(10, 2) NOT NULL,
     payment_method VARCHAR(10) CHECK (payment_method IN ('cash', 'tab')),
-    status         VARCHAR(20) DEFAULT 'pending',
-    -- 'pending' | 'preparing' | 'ready' | 'completed'
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Line items within an order
 CREATE TABLE order_items (
-    id                SERIAL PRIMARY KEY,
-    order_id          INT REFERENCES orders(id) ON DELETE CASCADE,
-    menu_item_id      INT REFERENCES menu_items(id),
-    quantity          INT NOT NULL,
-    price_at_purchase DECIMAL(10, 2) NOT NULL  -- price snapshot in case it changes later
+    id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(id) ON DELETE CASCADE,
+    menu_item_id INT REFERENCES menu_items(id),
+    quantity INT NOT NULL,
+    price_at_purchase DECIMAL(10, 2) NOT NULL
 );
+
 ```
 
 ---
