@@ -82,4 +82,3 @@ bitebox/ios/**/xcuserdata
 logs/
 temp/
 tmp/
-*.json
