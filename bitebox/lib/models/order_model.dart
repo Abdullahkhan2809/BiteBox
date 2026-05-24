@@ -15,7 +15,7 @@ class Order_items {
     menuItem: json['menu_item_id']?.toString() ?? json['menu_item'].toString(),
     name: json['name'] as String? ?? '',
     quantity: json['quantity'] as int,
-    priceAtpurchase: (json['price_at_purchase'] ?? json['priceAtpurchase'] as num).toDouble(),
+    priceAtpurchase: double.parse((json['price_at_purchase'] ?? json['priceAtpurchase']).toString()),
   );
 
   Map<String, dynamic> toJson() => {
@@ -56,7 +56,7 @@ class Order {
         item:         (json['items'] as List<dynamic>? ?? [])
                            .map((e) => Order_items.fromJson(e as Map<String, dynamic>))
                            .toList(),
-        totalAmount:   (json['total_amount'] as num).toDouble(),
+        totalAmount:   double.parse(json['total_amount'].toString()),
         paymentMethod: json['payment_method'] as String,
         status:        json['status'] as String? ?? 'pending',
         note:          json['note'] as String?,

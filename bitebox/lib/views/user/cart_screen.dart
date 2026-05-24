@@ -16,10 +16,11 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  TextEditingController _PromoCode = TextEditingController();
+  final TextEditingController _promoCode = TextEditingController();
+
   @override
   void dispose() {
-    _PromoCode.dispose();
+    _promoCode.dispose();
     super.dispose();
   }
 
@@ -28,205 +29,221 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Cart Empty. Add item.',
-            style: GoogleFonts.poppins(fontSize: 16),
+            'Cart is empty. Add an item first.',
+            style: GoogleFonts.poppins(fontSize: 14),
           ),
           backgroundColor: BBColors.redMuted,
         ),
       );
+      return;
     }
     Navigator.pushNamed(context, BiteBoxRoutes.UserDetails);
   }
 
-  int currentStep = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(74),
-        child: AppbarWidget(title: "CART"),
+        child: AppbarWidget(title: 'CART'),
       ),
-
       body: Consumer<CartProvider>(
-        builder: (context, cart, child) {
+        builder: (context, cart, _) {
+          final subtotal = cart.total;
+          final discount = subtotal * 0.1;
+          final total = subtotal - discount;
+
           return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Indicator(current_step: 1),
                 const SizedBox(height: 24),
+
+                // ITEMS pill
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  width: double.infinity,
-                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  height: 44,
                   decoration: BoxDecoration(
                     color: BBColors.surface2,
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Row(
                     children: [
-                      Align(
-                        widthFactor: 1.4,
-                        child: Text(
-                          'item',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      Text(
+                        'ITEMS',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       CircleAvatar(
                         radius: 14,
                         backgroundColor: BBColors.red,
                         child: Text(
                           '${cart.itemCount}',
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Cart items or empty state
                 if (cart.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      'Your cart is empty',
-                      style: GoogleFonts.poppins(color: BBColors.muted),
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Center(
+                      child: Text(
+                        'Your cart is empty',
+                        style: GoogleFonts.poppins(color: BBColors.muted, fontSize: 15),
+                      ),
                     ),
                   )
                 else
-                  ...cart.entries.map((entry) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: CartItem(
-                        title: entry.item.name,
-                        category: entry.item.tag,
-                        quantity: entry.quantity,
-                        itemDescription: entry.item.description,
-                        price: entry.item.price.toStringAsFixed(0),
-                        onIncrement: () => cart.increment(entry.item.id),
-                        onDecrement: () => cart.decrement(entry.item.id),
-                        onDelete: () => cart.removeItem(entry.item.id),
-                      ),
-                    );
-                  }).toList(),
+                  ...cart.entries.map((entry) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: CartItem(
+                          title: entry.item.name,
+                          category: entry.item.tag,
+                          quantity: entry.quantity,
+                          itemDescription: entry.item.description,
+                          price: entry.item.price.toStringAsFixed(2),
+                          imageUrl: entry.item.imageUrl,
+                          onIncrement: () => cart.increment(entry.item.id),
+                          onDecrement: () => cart.decrement(entry.item.id),
+                          onDelete: () => cart.removeItem(entry.item.id),
+                        ),
+                      )),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
-                _PromoCodeTextField(
-                  controller: _PromoCode,
-                  onApply: () {
-                    print(_PromoCode.text);
-                  },
-                ),
-                const SizedBox(height: 16),
+                // Promo code
                 Container(
-                  padding: EdgeInsets.all(16),
-                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: BBColors.surface2,
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white24, width: 1.5),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.local_offer_outlined, color: Colors.white54, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: _promoCode,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(
+                            hintText: 'Enter promo code',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: BBColors.red,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                          elevation: 0,
+                        ),
+                        child: Text('Apply', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Order Summary
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: BBColors.surface2,
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Order Summary',
-                        style: TextStyle(
-                          fontSize: 18,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Subtotal',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: BBColors.hintText,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            'Rs. ${cart.total.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 14),
+                      _summaryRow(
+                        label: 'Subtotal',
+                        value: 'Rs ${subtotal.toStringAsFixed(0)}',
+                        valueColor: Colors.white,
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Discount',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: BBColors.hintText,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            '- Rs. 0',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: BBColors.green,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 10),
+                      _summaryRow(
+                        label: 'Discount (10%)',
+                        value: '- Rs ${discount.toStringAsFixed(0)}',
+                        valueColor: BBColors.green,
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Total',
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            'Rs. ${cart.total.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 255, 18, 18),
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(color: Colors.white12, thickness: 1),
+                      ),
+                      _summaryRow(
+                        label: 'Total',
+                        value: 'Rs ${total.toStringAsFixed(0)}',
+                        valueColor: BBColors.red,
+                        bold: true,
+                        fontSize: 17,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-                ElevatedButton(
-                  onPressed: () => _handleDetail(cart),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(BBColors.red),
-                    foregroundColor: WidgetStatePropertyAll(Colors.white),
-                    padding: WidgetStateProperty.all(EdgeInsets.all(24)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Proceed to Checkout',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                // Proceed to Checkout button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => _handleDetail(cart),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: BBColors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                    ],
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      elevation: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Proceed to Checkout',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward_ios_rounded, size: 15),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -236,47 +253,34 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-}
 
-Widget _PromoCodeTextField({
-  required TextEditingController controller,
-  required VoidCallback onApply,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    decoration: BoxDecoration(
-      color: BBColors.surface2,
-      borderRadius: BorderRadius.circular(30),
-      border: Border.all(color: Colors.white24, width: 2),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _summaryRow({
+    required String label,
+    required String value,
+    required Color valueColor,
+    bool bold = false,
+    double fontSize = 14,
+  }) {
+    return Row(
       children: [
-        Icon(Icons.label),
-        const SizedBox(width: 6),
-        Expanded(
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              hintText: "Enter promo code",
-              hintStyle: TextStyle(color: Colors.grey),
-              border: InputBorder.none,
-            ),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: fontSize,
+            color: bold ? Colors.white : BBColors.muted,
+            fontWeight: bold ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
-        ElevatedButton(
-          onPressed: onApply,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: BBColors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        const Spacer(),
+        Text(
+          value,
+          style: GoogleFonts.poppins(
+            fontSize: fontSize,
+            fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+            color: valueColor,
           ),
-          child: const Text("Apply", style: TextStyle(color: Colors.white)),
         ),
       ],
-    ),
-  );
+    );
+  }
 }

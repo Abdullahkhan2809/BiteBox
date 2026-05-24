@@ -51,7 +51,11 @@ class OrderProvider extends ChangeNotifier {
     );
 
     if (result['success']) {
-      _placedOrder  = Order.fromJson(result['order'] as Map<String, dynamic>);
+      try {
+        _placedOrder = Order.fromJson(result['order'] as Map<String, dynamic>);
+      } catch (_) {
+        _placedOrder = null;
+      }
       _errorMessage = null;
       cartProvider.clear(); // wipe cart after successful order
       _setLoading(false);

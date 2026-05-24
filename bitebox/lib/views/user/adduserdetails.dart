@@ -1,10 +1,12 @@
 import 'package:bitebox/core/routes.dart';
 import 'package:bitebox/providers/auth_provider.dart';
 import 'package:bitebox/providers/cart_provider.dart';
+import 'package:bitebox/providers/order_provider.dart';
 import 'package:bitebox/views/widgets/appbar.dart';
 import 'package:bitebox/views/widgets/colors.dart';
 import 'package:bitebox/views/widgets/indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class Adduserdetails extends StatefulWidget {
@@ -17,9 +19,10 @@ class Adduserdetails extends StatefulWidget {
 class _AdduserdetailsState extends State<Adduserdetails> {
   final _keyform = GlobalKey<FormState>();
   final _fullname = TextEditingController();
-  final _PhoneNumber = TextEditingController();
-  final _CMSID = TextEditingController();
+  final _phoneNumber = TextEditingController();
+  final _cmsId = TextEditingController();
   String? _selectedPayment;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -27,8 +30,8 @@ class _AdduserdetailsState extends State<Adduserdetails> {
     final auth = context.read<AuthProvider>();
     if (auth.student != null) {
       _fullname.text = auth.student!.name;
-      _PhoneNumber.text = auth.student!.phone;
-      _CMSID.text = auth.student!.cmsid;
+      _phoneNumber.text = auth.student!.phone;
+      _cmsId.text = auth.student!.cmsid;
       _selectedPayment = auth.student!.paymentMethod.toLowerCase();
     }
   }
@@ -36,9 +39,97 @@ class _AdduserdetailsState extends State<Adduserdetails> {
   @override
   void dispose() {
     _fullname.dispose();
-    _PhoneNumber.dispose();
-    _CMSID.dispose();
+    _phoneNumber.dispose();
+    _cmsId.dispose();
     super.dispose();
+  }
+
+  Future<void> _onConfirmOrder() async {
+    if (!_keyform.currentState!.validate()) return;
+    if (_selectedPayment == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a payment method', style: GoogleFonts.poppins()),
+          backgroundColor: BBColors.redMuted,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      await _placeOrder();
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Something went wrong: $e', style: GoogleFonts.poppins()),
+            backgroundColor: BBColors.redMuted,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _placeOrder() async {
+
+    final authProvider = context.read<AuthProvider>();
+    final cartProvider = context.read<CartProvider>();
+    final orderProvider = context.read<OrderProvider>();
+
+    // Step 1: Authenticate → get JWT token
+    final loginSuccess = await authProvider.Studentlogin(
+      cmsId: _cmsId.text,
+      name: _fullname.text,
+      phone: _phoneNumber.text,
+      category: authProvider.student?.category ?? 'student',
+      paymentMethod: _selectedPayment!,
+    );
+
+    if (!mounted) return;
+
+    if (!loginSuccess) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authProvider.errorMessage ?? 'Authentication failed. Check CMS-ID.',
+            style: GoogleFonts.poppins(),
+          ),
+          backgroundColor: BBColors.redMuted,
+        ),
+      );
+      return;
+    }
+
+    // Step 2: Place order (token is now saved in Hive)
+    final restaurantId = cartProvider.restaurantId ?? '';
+    final orderSuccess = await orderProvider.placeOrder(
+      studentName: _fullname.text,
+      studentId: _cmsId.text,
+      restaurantId: restaurantId,
+      cartProvider: cartProvider,
+      paymentMethod: _selectedPayment!,
+    );
+
+    if (!mounted) return;
+
+    if (orderSuccess) {
+      Navigator.pushNamed(context, BiteBoxRoutes.checkout);
+    } else {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            orderProvider.errorMessage ?? 'Failed to place order. Try again.',
+            style: GoogleFonts.poppins(),
+          ),
+          backgroundColor: BBColors.redMuted,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
   }
 
   @override
@@ -49,283 +140,296 @@ class _AdduserdetailsState extends State<Adduserdetails> {
         preferredSize: const Size.fromHeight(74),
         child: AppbarWidget(title: 'DETAILS'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _keyform,
-          child: Column(
-            children: [
-              const Indicator(current_step: 2),
-              const SizedBox(height: 24),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        width: double.infinity,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: BBColors.surface2,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        child: Text(
-                          'YOUR DETAILS',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
+      body: Consumer<CartProvider>(
+        builder: (context, cartProvider, _) {
+          final subtotal = cartProvider.total;
+          final discount = subtotal * 0.1;
+          const deliveryFee = 99.0;
+
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Form(
+              key: _keyform,
+              child: Column(
+                children: [
+                  const Indicator(current_step: 2),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // YOUR DETAILS header
+                          _sectionHeader('YOUR DETAILS'),
+                          const SizedBox(height: 16),
+
+                          _buildTextField(
+                            controller: _fullname,
+                            label: 'Full Name',
+                            hint: 'Enter your full name',
+                            validator: (n) {
+                              if (n == null || n.trim().isEmpty) return 'Full name is required';
+                              if (!n.trim().contains(' ')) return 'Enter first and last name';
+                              if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(n.trim())) {
+                                return 'Only letters and spaces allowed';
+                              }
+                              return null;
+                            },
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      _buildTextField(
-                        controller: _fullname,
-                        label: 'Full Name',
-                        validator: (n) {
-                          if (n == null || n.trim().isEmpty) {
-                            return 'Full name is required';
-                          }
-                          String c = n.trim();
-                          if (!c.contains(' ')) {
-                            return 'Enter first and last name';
-                          }
-                          if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(c)) {
-                            return 'Only letters and spaces allowed';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      _buildTextField(
-                        controller: _PhoneNumber,
-                        label: 'Phone Number',
-                        keyboardType: TextInputType.phone,
-                        validator: (n) {
-                          if (n == null || n.isEmpty) {
-                            return 'Phone number is required';
-                          }
-                          if (!RegExp(r'^[0-9]+$').hasMatch(n)) {
-                            return 'Only numbers are allowed';
-                          }
-                          if (n.length != 11) {
-                            return 'Must be exactly 11 digits';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      _buildTextField(
-                        controller: _CMSID,
-                        label: 'CMS-ID',
-                        keyboardType: TextInputType.number,
-                        validator: (c) {
-                          if (c == null || c.isEmpty) {
-                            return 'CMS-ID is required';
-                          }
-                          if (!RegExp(r'^[0-9]+$').hasMatch(c)) {
-                            return 'Only numbers are allowed';
-                          }
-                          if (c.length != 6) {
-                            return 'Must be exactly 6 digits';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 24),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        width: double.infinity,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: BBColors.surface2,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        child: Text(
-                          'PAYMENT METHOD',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 16),
+
+                          _buildTextField(
+                            controller: _phoneNumber,
+                            label: 'Phone Number',
+                            hint: '+92 300 0000000',
+                            keyboardType: TextInputType.phone,
+                            validator: (n) {
+                              if (n == null || n.isEmpty) return 'Phone number is required';
+                              if (!RegExp(r'^[0-9]+$').hasMatch(n)) return 'Only numbers allowed';
+                              if (n.length != 11) return 'Must be exactly 11 digits';
+                              return null;
+                            },
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                          value: _selectedPayment,
-                          decoration: InputDecoration(
-                          filled: true,
-                          fillColor: BBColors.border,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none,
+                          const SizedBox(height: 16),
+
+                          _buildTextField(
+                            controller: _cmsId,
+                            label: 'Cms-ID',
+                            hint: '123456',
+                            keyboardType: TextInputType.number,
+                            validator: (c) {
+                              if (c == null || c.isEmpty) return 'CMS-ID is required';
+                              if (!RegExp(r'^[0-9]+$').hasMatch(c)) return 'Only numbers allowed';
+                              if (c.length != 6) return 'Must be exactly 6 digits';
+                              return null;
+                            },
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14,
-                            horizontal: 16,
+                          const SizedBox(height: 24),
+
+                          // PAYMENT METHOD header
+                          _sectionHeader('PAYMENT METHOD'),
+                          const SizedBox(height: 16),
+
+                          // Payment method cards
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _paymentCard(
+                                  value: 'cash',
+                                  title: 'Cash on Delivery',
+                                  subtitle: 'Pay when order arrives',
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _paymentCard(
+                                  value: 'tab',
+                                  title: 'Online Payment',
+                                  subtitle: 'Card / JazzCash / EasyPaisa',
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        dropdownColor: BBColors.surface2,
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
-                        icon: const Icon(Icons.keyboard_arrow_down, color: BBColors.muted),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'cash',
-                            child: Row(
-                              children: [
-                                Icon(Icons.payments_outlined, color: BBColors.green, size: 20),
-                                SizedBox(width: 10),
-                                Text('Cash'),
-                              ],
+                          const SizedBox(height: 24),
+
+                          // Order Summary
+                          Container(
+                            padding: const EdgeInsets.all(18),
+                            decoration: BoxDecoration(
+                              color: BBColors.surface2,
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ),
-                          DropdownMenuItem(
-                            value: 'tab',
-                            child: Row(
-                              children: [
-                                Icon(Icons.credit_card, color: BBColors.amber, size: 20),
-                                SizedBox(width: 10),
-                                Text('Tab (Credit)'),
-                              ],
-                            ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() => _selectedPayment = value);
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: BBColors.surface2,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Consumer<CartProvider>(
-                          builder: (context, cartProvider, _) {
-                            final subtotal = cartProvider.total;
-                            final discount = 0.0;
-                            final total = subtotal - discount;
-                            return Column(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Order Summary',
-                                  style: TextStyle(
-                                    fontSize: 18,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Subtotal',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: BBColors.hintText,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      'Rs. ${subtotal.toStringAsFixed(0)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Discount',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: BBColors.hintText,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      '- Rs. ${discount.toStringAsFixed(0)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: BBColors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Total',
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      'Rs. ${total.toStringAsFixed(0)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color.fromARGB(255, 255, 18, 18),
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ],
+                                const SizedBox(height: 14),
+                                _summaryRow('Subtotal', 'Rs ${subtotal.toStringAsFixed(0)}', Colors.white),
+                                const SizedBox(height: 10),
+                                _summaryRow('Delivery Fee', 'Rs ${deliveryFee.toStringAsFixed(0)}', Colors.white),
+                                const SizedBox(height: 10),
+                                _summaryRow(
+                                  'Discount (10%)',
+                                  '- Rs ${discount.toStringAsFixed(0)}',
+                                  BBColors.green,
                                 ),
                               ],
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_keyform.currentState!.validate()) {
-                            context.read<AuthProvider>().updateStudentDetails(
-                              name: _fullname.text,
-                              phone: _PhoneNumber.text,
-                              cmsid: _CMSID.text,
-                              paymentMethod: _selectedPayment ?? 'cash',
-                            );
-                            Navigator.pushNamed(context, BiteBoxRoutes.checkout);
-                          }
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(BBColors.red),
-                          foregroundColor: WidgetStatePropertyAll(Colors.white),
-                          padding: WidgetStateProperty.all(EdgeInsets.all(24)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Proceed to Checkout',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
                             ),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Confirm & Place Order button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _onConfirmOrder,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _isLoading ? BBColors.muted : BBColors.red,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                elevation: 0,
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Confirm & Place Order',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Icon(Icons.arrow_forward_ios_rounded, size: 15),
+                                      ],
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _sectionHeader(String title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: BBColors.surface2,
+        borderRadius: BorderRadius.circular(35),
+      ),
+      child: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: Colors.white,
         ),
       ),
+    );
+  }
+
+  Widget _paymentCard({
+    required String value,
+    required String title,
+    required String subtitle,
+  }) {
+    final isSelected = _selectedPayment == value;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedPayment = value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: BBColors.surface2,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? BBColors.red : Colors.white12,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 18,
+              height: 18,
+              margin: const EdgeInsets.only(top: 2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? BBColors.red : Colors.white38,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? Center(
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: BBColors.red,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      color: BBColors.muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _summaryRow(String label, String value, Color valueColor) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(fontSize: 14, color: BBColors.muted),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: valueColor,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -333,8 +437,8 @@ class _AdduserdetailsState extends State<Adduserdetails> {
 Widget _buildTextField({
   required TextEditingController controller,
   required String label,
+  String? hint,
   TextInputType? keyboardType,
-  int maxLines = 1,
   String? Function(String?)? validator,
 }) {
   return Column(
@@ -344,8 +448,8 @@ Widget _buildTextField({
         label,
         style: const TextStyle(
           color: BBColors.muted,
-          fontWeight: FontWeight.w300,
-          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          fontSize: 14,
         ),
       ),
       const SizedBox(height: 6),
@@ -353,18 +457,25 @@ Widget _buildTextField({
         controller: controller,
         keyboardType: keyboardType,
         validator: validator,
-        maxLines: maxLines,
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          hintText: 'Enter ${label.toLowerCase()}...',
+          hintText: hint ?? 'Enter ${label.toLowerCase()}',
           hintStyle: const TextStyle(color: Color(0xFF737373)),
           filled: true,
           fillColor: BBColors.border,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
           ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: BBColors.red, width: 1.5),
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         ),
       ),
     ],

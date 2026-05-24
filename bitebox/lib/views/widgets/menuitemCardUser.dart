@@ -109,7 +109,7 @@ class Menuitemcarduser extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  price != null ? 'Rs $price.00' : 'Ask from the canteen',
+                  price != null ? 'Rs $price' : 'Ask from the canteen',
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,

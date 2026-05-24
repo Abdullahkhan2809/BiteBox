@@ -37,10 +37,10 @@ exports.placeOrder = async (req, res) => {
     // insert order
     const orderResult = await client.query(
       `INSERT INTO orders
-         (student_id, restaurant_id, total_amount, payment_method, status, note)
-       VALUES ($1, $2, $3, $4, 'pending', $5)
+         (student_id, restaurant_id, total_amount, payment_method, status)
+       VALUES ($1, $2, $3, $4, 'pending')
        RETURNING *`,
-      [student_id, restaurant_id, total_amount, payment_method, note]
+      [student_id, restaurant_id, total_amount, payment_method]
     );
     const order = orderResult.rows[0];
 
